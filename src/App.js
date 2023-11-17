@@ -1,25 +1,60 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext, useEffect, useState } from 'react';
+import {
+    BrowserRouter as Router,
+    Route,
+    Routes,
+    useNavigate,
+    Navigate,
+} from 'react-router-dom';
+import Home from './pages/Home';
+import Login from './components/Login';
+import {  AuthContext } from './context/AuthContext';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const AuthenticatedRoutes = () => {
+    const navigate = useNavigate();
+    const { idToken } = useContext(AuthContext);
+
+    useEffect(() => {
+        navigate(idToken ? '/home' : '/login');
+    }, [navigate, idToken]);
+
+    return <Home />;
+};
+
+const App = () => {
+    const { idToken } = useContext(AuthContext);
+    const [isAuthorized, setIsAuthorized] = useState(false);
+
+    useEffect(() => {
+        setIsAuthorized(!!idToken);
+    }, [idToken]);
+
+    return (
+        <Router>
+                <Routes>
+                    {isAuthorized ? (
+                        <>
+                            <Route
+                                path="/home"
+                                element={<AuthenticatedRoutes />}
+                            />
+                            <Route
+                                path="*"
+                                element={<Navigate replace to="/home" />}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <Route path="/login" element={<Login />} />
+                            <Route
+                                path="*"
+                                element={<Navigate replace to="/login" />}
+                            />
+                        </>
+                    )}
+                </Routes>
+        </Router>
+    );
+};
 
 export default App;
