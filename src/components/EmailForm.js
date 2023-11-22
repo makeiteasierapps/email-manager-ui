@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Formik, Field, Form, useFormik } from 'formik';
+import { useState, useEffect, useRef } from 'react';
+import _ from 'lodash';
 import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -13,8 +13,10 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-const StyledField = styled(Field)(({ theme }) => ({
+const StyledField = styled(TextField)(({ theme }) => ({
     marginBottom: theme.spacing(2),
 }));
 
@@ -22,8 +24,8 @@ function createEmailTemplate(values) {
     const templates = [
         {
             id: 1,
+            subject: ` ${values.recipient_company} x Gal Media`,
             content: `
-                <h1> ${values.recipient_company} x Gal Media</h1>
                 <p>
                     Hi ${values.recipient_name},
                 </p>
@@ -46,8 +48,8 @@ function createEmailTemplate(values) {
         },
         {
             id: 2,
+            subject: `Press and Media Opportunities for ${values.recipient_company}`,
             content: `
-                <h1>Press and Media Opportunities for ${values.recipient_company}</h1>
                 <p>
                     Hi ${values.recipient_name},
                 </p>
@@ -77,8 +79,18 @@ const validationSchema = yup.object({
         .required('Email is required'),
     recipient_name: yup.string().required('Recipient Name is required'),
     recipient_company: yup.string().required('Recipient Company is required'),
-    subject: yup.string().required('Subject is required'),
-    message: yup.string().required('Message is required'),
+    subject: yup
+        .string()
+        .test('useTemplate', 'Subject is required', function (value) {
+            const { useTemplate } = this.parent;
+            return useTemplate ? true : !!value;
+        }),
+    message: yup
+        .string()
+        .test('useTemplate', 'Message is required', function (value) {
+            const { useTemplate } = this.parent;
+            return useTemplate ? true : !!value;
+        }),
 });
 
 const formFields = [
@@ -93,7 +105,34 @@ const formFields = [
 export default function EmailForm() {
     const [previewTemplate, setPreviewTemplate] = useState(null);
     const [templates, setTemplates] = useState([]);
-    const handleSubmit = async (values, actions) => {
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+    } = useForm({
+        resolver: yupResolver(validationSchema),
+    });
+
+    const formValues = watch();
+    const prevFormValuesRef = useRef();
+    const useTemplate = watch('useTemplate');
+
+    useEffect(() => {
+        prevFormValuesRef.current = formValues;
+    }, [formValues]);
+    const prevFormValues = prevFormValuesRef.current;
+
+    useEffect(() => {
+        if (!_.isEqual(formValues, prevFormValues)) {
+            const newTemplates = createEmailTemplate(formValues);
+            setTemplates(createEmailTemplate(formValues));
+            setSelectedTemplate(newTemplates[0]);
+        }
+    }, [formValues, prevFormValues]);
+
+    const onSubmit = async (values) => {
         let data = {
             user_id: 'shauno.co',
             sender_email: 'shaun@mg.shauno.co',
@@ -101,9 +140,17 @@ export default function EmailForm() {
             recipient_email: values.recipient_email,
             recipient_name: values.recipient_name,
             recipient_company: values.recipient_company,
-            subject: values.subject,
-            message: values.message,
+            subject:
+                useTemplate && selectedTemplate
+                    ? selectedTemplate.subject
+                    : values.subject,
+            message:
+                useTemplate && selectedTemplate
+                    ? selectedTemplate.content
+                    : values.message,
         };
+
+        console.log(data);
 
         try {
             const response = await axios.post(
@@ -116,7 +163,6 @@ export default function EmailForm() {
                 }
             );
             console.log(response);
-            actions.setSubmitting(false);
         } catch (error) {
             console.error(
                 'There has been a problem with your login operation:',
@@ -124,101 +170,71 @@ export default function EmailForm() {
             );
         }
     };
-    
-    const formik = useFormik({
-        initialValues: {
-            useTemplate: false,
-            sender_name: '',
-            recipient_email: '',
-            recipient_name: '',
-            recipient_company: '',
-            subject: '',
-            message: '',
-        },
-        validationSchema: validationSchema,
-        onSubmit: handleSubmit,
-    });
-
-    useEffect(() => {
-        const templates = createEmailTemplate(formik.values);
-        setTemplates(templates);
-    }, [formik.values]);
 
     return (
         <>
-            <Formik {...formik}>
-                {({ errors, touched, handleChange, values }) => {
-                    return (
-                        <Form>
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={values.useTemplate}
-                                        onChange={handleChange}
-                                        name="useTemplate"
-                                        color="primary"
-                                    />
-                                }
-                                label="Use Template"
-                            />
-                            {formFields.map((field) =>
-                                field.id === 'message' && values.useTemplate ? (
-                                    <Carousel>
-                                        {templates.map((template) => (
-                                            <div
-                                                key={template.id}
-                                                onClick={() =>
-                                                    setPreviewTemplate(template)
-                                                }
-                                            >
-                                                <Card>
-                                                    <CardContent>
-                                                        <div
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: template.content,
-                                                            }}
-                                                        />
-                                                    </CardContent>
-                                                </Card>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <FormControlLabel
+                    control={
+                        <Switch {...register('useTemplate')} color="primary" />
+                    }
+                    label="Use Template"
+                />
+
+                {formFields.map((field) =>
+                    field.id === 'message' && useTemplate ? (
+                        <Carousel
+                            showThumbs={false}
+                            onChange={(index) =>
+                                setSelectedTemplate(templates[index])
+                            }
+                        >
+                            {templates.map((template) => (
+                                <div
+                                    key={template.id}
+                                    onClick={() => setPreviewTemplate(template)}
+                                >
+                                    <Card>
+                                        <CardContent>
+                                            <div>
+                                                <strong>Subject:</strong>{' '}
+                                                {template.subject}
                                             </div>
-                                        ))}
-                                    </Carousel>
-                                ) : (
-                                    <StyledField
-                                        key={field.id}
-                                        as={TextField}
-                                        fullWidth
-                                        name={field.id}
-                                        label={field.label}
-                                        error={
-                                            touched[field.id] &&
-                                            Boolean(errors[field.id])
-                                        }
-                                        helperText={
-                                            touched[field.id] &&
-                                            errors[field.id]
-                                        }
-                                        {...(field.multiline && {
-                                            multiline: true,
-                                            rows: field.rows,
-                                        })}
-                                        onChange={handleChange}
-                                        value={values[field.id]}
-                                    />
-                                )
-                            )}
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                fullWidth
-                                type="submit"
-                            >
-                                Submit
-                            </Button>
-                        </Form>
-                    );
-                }}
-            </Formik>
+                                            <div
+                                                dangerouslySetInnerHTML={{
+                                                    __html: template.content,
+                                                }}
+                                            />
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            ))}
+                        </Carousel>
+                    ) : field.id === 'subject' && useTemplate ? null : (
+                        <StyledField
+                            key={field.id}
+                            fullWidth
+                            name={field.id}
+                            label={field.label}
+                            {...register(field.id)}
+                            error={!!errors[field.id]}
+                            helperText={errors[field.id]?.message}
+                            {...(field.multiline && {
+                                multiline: true,
+                                rows: field.rows,
+                            })}
+                        />
+                    )
+                )}
+                <Button
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    type="submit"
+                >
+                    Submit
+                </Button>
+            </form>
             <Dialog
                 open={!!previewTemplate}
                 onClose={() => setPreviewTemplate(null)}
