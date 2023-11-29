@@ -3,8 +3,9 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import EmailForm from '../components/EmailForm';
-import Csv from '../components/Csv';
+import EmailForm from '../components/email/EmailForm';
+import Csv from '../components/email/Csv';
+import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
 
 export default function Home() {
     const [value, setValue] = useState(0);
@@ -14,7 +15,7 @@ export default function Home() {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" sx={{ height: '100vh', width: '100%' }}>
             <Box
                 sx={{
                     marginTop: 8,
@@ -30,9 +31,11 @@ export default function Home() {
                 >
                     <Tab label="Email Form" />
                     <Tab label="CSV" />
+                    <Tab label="Email CRM Info" />
                 </Tabs>
                 {value === 0 && <EmailForm />}
                 {value === 1 && <Csv />}
+                {value === 2 && <EmailCRMInfoPanel />}
             </Box>
         </Container>
     );
