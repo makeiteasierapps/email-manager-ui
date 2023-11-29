@@ -17,7 +17,12 @@ const EmailCRMInfoPanel = () => {
         const handleFetch = async () => {
             try {
                 const response = await axios.get(
-                    'http://localhost:5000/fetch_email_data'
+                    'https://email-automation-api-rosy.vercel.app/fetch_email_data',
+                    {
+                        headers: {
+                            'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
+                        },
+                    }
                 );
                 setData(response.data.email_data);
                 console.log(response.data.email_data);

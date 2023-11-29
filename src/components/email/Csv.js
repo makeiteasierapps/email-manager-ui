@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import CsvDropzone from './FileDropZone';
+
 export default function CsvComponent() {
     const [file, setFile] = useState(null);
     const [dataList, setDataList] = useState([]);
@@ -29,8 +30,13 @@ export default function CsvComponent() {
 
         try {
             const response = await axios.post(
-                'http://localhost:5000/upload',
-                formData
+                'https://email-automation-api-rosy.vercel.app/upload',
+                formData,
+                {
+                    headers: {
+                        'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
+                    },
+                }
             );
 
             setDataList(response.data.data_list);
@@ -39,12 +45,19 @@ export default function CsvComponent() {
             console.error(error);
         }
     };
-
     const handleSendCsvEmails = async () => {
         setIsSending(true);
-        const data = { user_id: 'shauno.co', email_templates: emailTemplates };
+        const data = { user_id: 'galmedia', email_templates: emailTemplates };
         try {
-            await axios.post('http://localhost:5000/send_multiple', data);
+            await axios.post(
+                'https://email-automation-api-rosy.vercel.app/send_multiple',
+                data,
+                {
+                    headers: {
+                        'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
+                    },
+                }
+            );
             alert('Emails sent successfully');
             setIsSending(false);
             setEmailTemplates([]);

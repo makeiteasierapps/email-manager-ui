@@ -134,8 +134,8 @@ export default function EmailForm() {
 
     const onSubmit = async (values) => {
         let data = {
-            user_id: 'shauno.co',
-            sender_email: 'shaun@mg.shauno.co',
+            user_id: 'galmedia',
+            sender_email: 'pr@mail.galmediagroup.com',
             sender_name: values.sender_name,
             recipient_email: values.recipient_email,
             recipient_name: values.recipient_name,
@@ -150,8 +150,6 @@ export default function EmailForm() {
                     : values.message,
         };
 
-        console.log(data);
-
         try {
             const response = await axios.post(
                 'https://email-automation-api-rosy.vercel.app/send_custom',
@@ -159,10 +157,10 @@ export default function EmailForm() {
                 {
                     headers: {
                         'Content-Type': 'application/json',
+                        'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
                     },
                 }
             );
-            console.log(response);
         } catch (error) {
             console.error(
                 'There has been a problem with your login operation:',
