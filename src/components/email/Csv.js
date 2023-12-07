@@ -76,7 +76,12 @@ export default function CsvComponent() {
                 setSelectedFile={setSelectedFile}
                 setFile={setFile}
             />
-            <Button variant="contained" color="primary" onClick={handleUpload}>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleUpload}
+                style={{ marginBottom: '10px' }}
+            >
                 Upload
             </Button>
             {emailTemplates.length > 0 && dataList.length > 0 && (
