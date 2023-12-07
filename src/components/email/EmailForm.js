@@ -33,7 +33,7 @@ function createEmailTemplate(values) {
                     Thanks for connecting with us on Instagram [or wherever you found them]. We love your brand and have been following your success!
                 </p>
                 <p>
-                    We've helped our clients achieve amazing results, such as getting them over 500+ press features, hosting Instagram-worthy events, TV Interviews, Podcasts and gaining millions of social impressions. <a href="your_deck_link_here">Here's a link</a> to our deck if you'd like to see some of our past work.
+                    We've helped our clients achieve amazing results, such as getting them over 500+ press features, hosting Instagram-worthy events, TV Interviews, Podcasts and gaining millions of social impressions. <a href="https://www.canva.com/design/DAFkfumafCA/V969oq3lnN8mrRlhHwPbxA/view" target="_blank">Here's a link</a> to our deck if you'd like to see some of our past work.
                 </p>
                 <p>
                     We use a simple 4-step system to help our clients achieve their PR goals and rank higher on google, and I'd love to schedule a quick 20-minute call with you to discuss how we can implement this process to help take your brand to new heights.
@@ -57,7 +57,7 @@ function createEmailTemplate(values) {
                     My name is ${values.sender_name}, I am the Senior Account Director at Gal Media. Our Founder, Jennifer Jaden, asked me to personally reach out to you and see who is the best contact on your team to discuss strategies for increasing your brand's exposure with press and media opportunities?
                 </p>
                 <p>
-                    We have a successful track record of assisting clients in securing 500+ press features, orchestrating Instagram-worthy events, TV Interviews, Podcasts and generating millions of social impressions for them. <a href="your_deck_link_here">Here's a link</a> to our deck showcasing some of our past work.
+                    We have a successful track record of assisting clients in securing 500+ press features, orchestrating Instagram-worthy events, TV Interviews, Podcasts and generating millions of social impressions for them. <a href="https://www.canva.com/design/DAFkfumafCA/V969oq3lnN8mrRlhHwPbxA/view" target="_blank">Here's a link</a> to our deck showcasing some of our past work.
                 </p>
                 <p>
                     Are you available for a quick chat this week? Or if you could direct me to the appropriate person on your team, that would be greatly appreciated.
@@ -152,7 +152,7 @@ export default function EmailForm() {
 
         try {
             const response = await axios.post(
-                'https://email-automation-api-rosy.vercel.app/send_custom',
+                'http://localhost:5000/send_custom',
                 data,
                 {
                     headers: {
