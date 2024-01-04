@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import CsvDropzone from './FileDropZone';
 
-export default function CsvComponent() {
+const CsvComponent = () => {
     const [file, setFile] = useState(null);
     const [dataList, setDataList] = useState([]);
     const [emailTemplates, setEmailTemplates] = useState([]);
@@ -30,7 +30,7 @@ export default function CsvComponent() {
 
         try {
             const response = await axios.post(
-                'https://email-automation-api-rosy.vercel.app/upload',
+                'http://localhost:3000/processfile',
                 formData,
                 {
                     headers: {
@@ -38,26 +38,23 @@ export default function CsvComponent() {
                     },
                 }
             );
-
-            setDataList(response.data.data_list);
-            setEmailTemplates(response.data.email_templates);
+            console.log(response.data);
+            setDataList(response.data.results);
+            setEmailTemplates(response.data.emailTemplates);
         } catch (error) {
             console.error(error);
         }
     };
+
     const handleSendCsvEmails = async () => {
         setIsSending(true);
-        const data = { user_id: 'galmedia', email_templates: emailTemplates };
+        const data = { user_id: 'testing', emailTemplates };
         try {
-            await axios.post(
-                'https://email-automation-api-rosy.vercel.app/send_multiple',
-                data,
-                {
-                    headers: {
-                        'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
-                    },
-                }
-            );
+            await axios.post('http://localhost:5000/send', data, {
+                headers: {
+                    'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
+                },
+            });
             alert('Emails sent successfully');
             setIsSending(false);
             setEmailTemplates([]);
@@ -146,3 +143,5 @@ export default function CsvComponent() {
         </>
     );
 }
+
+export default CsvComponent;

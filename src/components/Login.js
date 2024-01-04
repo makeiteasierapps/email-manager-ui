@@ -23,7 +23,7 @@ const validationSchema = yup.object({
         .required('Password is required'),
 });
 
-export default function Login() {
+const Login = () => {
     const { setUser } = useContext(AuthContext);
 
     const handleLogin = async (email, password) => {
@@ -66,7 +66,7 @@ export default function Login() {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Gal Media
+                    Email Manager
                 </Typography>
                 <Box
                     component="form"
@@ -120,3 +120,5 @@ export default function Login() {
         </Container>
     );
 }
+
+export default Login;

@@ -20,26 +20,23 @@ const StyledField = styled(TextField)(({ theme }) => ({
     marginBottom: theme.spacing(2),
 }));
 
-function createEmailTemplate(values) {
+const createEmailTemplate = (values) => {
     const templates = [
         {
             id: 1,
-            subject: ` ${values.recipient_company} x Gal Media`,
+            subject: ` ${values.recipient_company}`,
             content: `
                 <p>
                     Hi ${values.recipient_name},
                 </p>
                 <p>
-                    Thanks for connecting with us on Instagram [or wherever you found them]. We love your brand and have been following your success!
+                    Thanks for connecting with us. We appreciate your brand and have been following your success!
                 </p>
                 <p>
-                    We've helped our clients achieve amazing results, such as getting them over 500+ press features, hosting Instagram-worthy events, TV Interviews, Podcasts and gaining millions of social impressions. <a href="https://www.canva.com/design/DAFkfumafCA/V969oq3lnN8mrRlhHwPbxA/view" target="_blank">Here's a link</a> to our deck if you'd like to see some of our past work.
+                    We've helped our clients achieve amazing results, such as getting them over 500+ press features, hosting events, TV Interviews, Podcasts and gaining millions of social impressions. <a href="https://www.example.com" target="_blank">Here's a link</a> to our deck if you'd like to see some of our past work.
                 </p>
                 <p>
-                    We use a simple 4-step system to help our clients achieve their PR goals and rank higher on google, and I'd love to schedule a quick 20-minute call with you to discuss how we can implement this process to help take your brand to new heights.
-                </p>
-                <p>
-                    Are you available for a quick chat this week, or you can schedule a time on my calendar using this <a href="https://calendly.com/galmediagroup/consultation">link</a>.
+                    Are you available for a quick chat this week, or you can schedule a time on my calendar using this <a href="https://www.example.com">link</a>.
                 </p>
                 <p>
                     Looking forward to hearing from you!
@@ -54,10 +51,10 @@ function createEmailTemplate(values) {
                     Hi ${values.recipient_name},
                 </p>
                 <p>
-                    My name is ${values.sender_name}, I am the Senior Account Director at Gal Media. Our Founder, Jennifer Jaden, asked me to personally reach out to you and see who is the best contact on your team to discuss strategies for increasing your brand's exposure with press and media opportunities?
+                    My name is ${values.sender_name}, I am the Account Director at AmazingCo. Our team asked me to personally reach out to you and see who is the best contact on your team to discuss strategies for increasing your brand's exposure with press and media opportunities?
                 </p>
                 <p>
-                    We have a successful track record of assisting clients in securing 500+ press features, orchestrating Instagram-worthy events, TV Interviews, Podcasts and generating millions of social impressions for them. <a href="https://www.canva.com/design/DAFkfumafCA/V969oq3lnN8mrRlhHwPbxA/view" target="_blank">Here's a link</a> to our deck showcasing some of our past work.
+                    We have a successful track record of assisting clients in securing 500+ press features, orchestrating events, TV Interviews, Podcasts and generating millions of social impressions for them. <a href="https://www.example.com" target="_blank">Here's a link</a> to our deck showcasing some of our past work.
                 </p>
                 <p>
                     Are you available for a quick chat this week? Or if you could direct me to the appropriate person on your team, that would be greatly appreciated.
@@ -69,7 +66,7 @@ function createEmailTemplate(values) {
         },
     ];
     return templates;
-}
+};
 
 const validationSchema = yup.object({
     sender_name: yup.string().required('Sender Name is required'),
@@ -102,7 +99,7 @@ const formFields = [
     { id: 'message', label: 'Message', multiline: true, rows: 4 },
 ];
 
-export default function EmailForm() {
+const EmailForm = () => {
     const [previewTemplate, setPreviewTemplate] = useState(null);
     const [templates, setTemplates] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -133,11 +130,10 @@ export default function EmailForm() {
     }, [formValues, prevFormValues]);
 
     const onSubmit = async (values) => {
-        let data = {
-            user_id: 'galmedia',
-            sender_email: 'pr@mail.galmediagroup.com',
+        const emailTemplate = {
+            sender_email: 'test@mg.shauno.co',
             sender_name: values.sender_name,
-            recipient_email: values.recipient_email,
+            email: values.recipient_email,
             recipient_name: values.recipient_name,
             recipient_company: values.recipient_company,
             subject:
@@ -149,10 +145,14 @@ export default function EmailForm() {
                     ? selectedTemplate.content
                     : values.message,
         };
+        const data = {
+            user_id: 'testing',
+            emailTemplates: emailTemplate,
+        };
 
         try {
             const response = await axios.post(
-                'http://localhost:5000/send_custom',
+                'http://localhost:5000/send',
                 data,
                 {
                     headers: {
@@ -247,4 +247,6 @@ export default function EmailForm() {
             </Dialog>
         </>
     );
-}
+};
+
+export default EmailForm;

@@ -7,7 +7,7 @@ import EmailForm from '../components/email/EmailForm';
 import Csv from '../components/email/Csv';
 import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
 
-export default function Home() {
+const Home = () => {
     const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
@@ -40,3 +40,5 @@ export default function Home() {
         </Container>
     );
 }
+
+export default Home;
