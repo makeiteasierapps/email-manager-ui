@@ -152,12 +152,11 @@ const EmailForm = () => {
 
         try {
             const response = await axios.post(
-                'http://localhost:5000/send',
+                'https://email-manager-node.vercel.app/api/send',
                 data,
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
                     },
                 }
             );

@@ -30,15 +30,14 @@ const CsvComponent = () => {
 
         try {
             const response = await axios.post(
-                'http://localhost:3000/processfile',
+                'https://email-manager-node.vercel.app/api/process-file',
                 formData,
                 {
                     headers: {
-                        'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
+                        'Content-Type': 'multipart/form-data',
                     },
                 }
             );
-            console.log(response.data);
             setDataList(response.data.results);
             setEmailTemplates(response.data.emailTemplates);
         } catch (error) {
@@ -50,11 +49,15 @@ const CsvComponent = () => {
         setIsSending(true);
         const data = { user_id: 'testing', emailTemplates };
         try {
-            await axios.post('http://localhost:5000/send', data, {
-                headers: {
-                    'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
-                },
-            });
+            await axios.post(
+                'https://email-manager-node.vercel.app/api/send',
+                data,
+                {
+                    headers: {
+                        'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
+                    },
+                }
+            );
             alert('Emails sent successfully');
             setIsSending(false);
             setEmailTemplates([]);
@@ -142,6 +145,6 @@ const CsvComponent = () => {
             </TableContainer>
         </>
     );
-}
+};
 
 export default CsvComponent;
