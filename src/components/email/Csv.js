@@ -30,7 +30,7 @@ const CsvComponent = () => {
 
         try {
             const response = await axios.post(
-                'https://email-manager-node.vercel.app/api/process-file',
+                `${process.env.REACT_APP_BACKEND_URL}/process-file`,
                 formData,
                 {
                     headers: {
@@ -50,7 +50,7 @@ const CsvComponent = () => {
         const data = { user_id: 'testing', emailTemplates };
         try {
             await axios.post(
-                'https://email-manager-node.vercel.app/api/send',
+                `${process.env.REACT_APP_BACKEND_URL}/send`,
                 data,
                 {
                     headers: {

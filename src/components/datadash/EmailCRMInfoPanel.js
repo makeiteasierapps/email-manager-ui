@@ -17,7 +17,7 @@ const EmailCRMInfoPanel = () => {
         const handleFetch = async () => {
             try {
                 const response = await axios.get(
-                    'https://email-manager-node.vercel.app/api/email-data'
+                    `${process.env.REACT_APP_BACKEND_URL}/email-data`
                 );
                 setData(response.data);
                 console.log(response.data);

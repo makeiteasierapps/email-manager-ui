@@ -152,7 +152,7 @@ const EmailForm = () => {
 
         try {
             const response = await axios.post(
-                'https://email-manager-node.vercel.app/api/send',
+                `${process.env.REACT_APP_BACKEND_URL}/send`,
                 data,
                 {
                     headers: {
