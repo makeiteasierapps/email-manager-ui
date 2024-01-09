@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import {
     Button,
     Table,
@@ -11,13 +11,15 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import CsvDropzone from './FileDropZone';
+import {AuthContext} from '../../context/AuthContext';
 
-const CsvComponent = () => {
+const CsvComponent = ({templates, setSelectedTemplate, setPreviewTemplate}) => {
     const [file, setFile] = useState(null);
     const [dataList, setDataList] = useState([]);
     const [emailTemplates, setEmailTemplates] = useState([]);
     const [isSending, setIsSending] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
+    const { uid } = useContext(AuthContext);
 
     const handleUpload = async () => {
         if (!file) {
@@ -47,7 +49,7 @@ const CsvComponent = () => {
 
     const handleSendCsvEmails = async () => {
         setIsSending(true);
-        const data = { user_id: 'testing', emailTemplates };
+        const data = { user_id: uid, emailTemplates };
         try {
             await axios.post(
                 `${process.env.REACT_APP_BACKEND_URL}/send`,

@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import EmailForm from '../components/email/EmailForm';
-import Csv from '../components/email/Csv';
 import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
 
 const Home = () => {
@@ -29,13 +28,12 @@ const Home = () => {
                     onChange={handleChange}
                     aria-label="simple tabs example"
                 >
-                    <Tab label="Email Form" />
-                    <Tab label="CSV" />
-                    <Tab label="Email CRM Info" />
+                    <Tab label="Send" />
+                    
+                    <Tab label="Email Info" />
                 </Tabs>
                 {value === 0 && <EmailForm />}
-                {value === 1 && <Csv />}
-                {value === 2 && <EmailCRMInfoPanel />}
+                {value === 1 && <EmailCRMInfoPanel />}
             </Box>
         </Container>
     );

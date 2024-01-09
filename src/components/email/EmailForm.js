@@ -1,20 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import _ from 'lodash';
 import * as yup from 'yup';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import {
+    Button,
+    Box,
+    TextField,
+    Switch,
+    FormControlLabel,
+    Card,
+    CardContent,
+    Dialog,
+    DialogContent,
+} from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AuthContext } from '../../context/AuthContext';
+import CsvComponent from './Csv';
 
 const StyledField = styled(TextField)(({ theme }) => ({
     marginBottom: theme.spacing(2),
@@ -24,7 +29,7 @@ const createEmailTemplate = (values) => {
     const templates = [
         {
             id: 1,
-            subject: ` ${values.recipient_company}`,
+            subject: `Press and Media Opportunities for ${values.recipient_company}`,
             content: `
                 <p>
                     Hi ${values.recipient_name},
@@ -99,10 +104,84 @@ const formFields = [
     { id: 'message', label: 'Message', multiline: true, rows: 4 },
 ];
 
+const TemplateCarousel = ({ templates, setSelectedTemplate }) => {
+    return (
+        <Carousel
+            showThumbs={false}
+            onChange={(index) => setSelectedTemplate(templates[index])}
+        >
+            {templates.map((template) => (
+                <div key={template.id}>
+                    <Card>
+                        <CardContent>
+                            <div>
+                                <strong>Subject:</strong> {template.subject}
+                            </div>
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: template.content,
+                                }}
+                            />
+                        </CardContent>
+                    </Card>
+                </div>
+            ))}
+        </Carousel>
+    );
+};
+
+const EmailFormComponent = ({
+    onSubmit,
+    register,
+    errors,
+    useTemplate,
+    templates,
+    setSelectedTemplate,
+    isBulk,
+}) => {
+    return (
+        <form onSubmit={onSubmit}>
+            {formFields.map((field) =>
+                isBulk &&
+                [
+                    'recipient_email',
+                    'recipient_name',
+                    'recipient_company',
+                ].includes(field.id) ? null : field.id === 'message' &&
+                  useTemplate ? (
+                    <TemplateCarousel
+                        templates={templates}
+                        setSelectedTemplate={setSelectedTemplate}
+                    />
+                ) : field.id === 'subject' && useTemplate ? null : (
+                    <StyledField
+                        key={field.id}
+                        fullWidth
+                        name={field.id}
+                        label={field.label}
+                        {...register(field.id)}
+                        error={!!errors[field.id]}
+                        helperText={errors[field.id]?.message}
+                        {...(field.multiline && {
+                            multiline: true,
+                            rows: field.rows,
+                        })}
+                    />
+                )
+            )}
+            <Button color="primary" variant="contained" fullWidth type="submit">
+                Submit
+            </Button>
+        </form>
+    );
+};
+
 const EmailForm = () => {
-    const [previewTemplate, setPreviewTemplate] = useState(null);
+    const [isBulk, setIsBulk] = useState(false);
     const [templates, setTemplates] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
+    const { uid } = useContext(AuthContext);
+
     const {
         register,
         handleSubmit,
@@ -146,7 +225,7 @@ const EmailForm = () => {
                     : values.message,
         };
         const data = {
-            user_id: 'testing',
+            uid: uid,
             emailTemplates: emailTemplate,
         };
 
@@ -170,80 +249,64 @@ const EmailForm = () => {
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <FormControlLabel
-                    control={
-                        <Switch {...register('useTemplate')} color="primary" />
-                    }
-                    label="Use Template"
-                />
-
-                {formFields.map((field) =>
-                    field.id === 'message' && useTemplate ? (
-                        <Carousel
-                            showThumbs={false}
-                            onChange={(index) =>
-                                setSelectedTemplate(templates[index])
-                            }
-                        >
-                            {templates.map((template) => (
-                                <div
-                                    key={template.id}
-                                    onClick={() => setPreviewTemplate(template)}
-                                >
-                                    <Card>
-                                        <CardContent>
-                                            <div>
-                                                <strong>Subject:</strong>{' '}
-                                                {template.subject}
-                                            </div>
-                                            <div
-                                                dangerouslySetInnerHTML={{
-                                                    __html: template.content,
-                                                }}
-                                            />
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            ))}
-                        </Carousel>
-                    ) : field.id === 'subject' && useTemplate ? null : (
-                        <StyledField
-                            key={field.id}
-                            fullWidth
-                            name={field.id}
-                            label={field.label}
-                            {...register(field.id)}
-                            error={!!errors[field.id]}
-                            helperText={errors[field.id]?.message}
-                            {...(field.multiline && {
-                                multiline: true,
-                                rows: field.rows,
-                            })}
-                        />
-                    )
-                )}
-                <Button
-                    color="primary"
-                    variant="contained"
-                    fullWidth
-                    type="submit"
-                >
-                    Submit
-                </Button>
-            </form>
-            <Dialog
-                open={!!previewTemplate}
-                onClose={() => setPreviewTemplate(null)}
+            <Box
+                display={'flex'}
+                justifyContent={'center'}
+                gap={2}
+                marginTop={5}
+                marginBottom={2}
+                width={'100%'}
             >
-                <DialogContent>
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: previewTemplate?.content,
-                        }}
+                <Button
+                    variant={isBulk ? 'outlined' : 'contained'}
+                    color="primary"
+                    onClick={() => setIsBulk(false)} // Add this line
+                >
+                    Single Email
+                </Button>
+                <Button
+                    variant={isBulk ? 'contained' : 'outlined'}
+                    color="primary"
+                    onClick={() => setIsBulk(true)} // Add this line
+                >
+                    Bulk Email
+                </Button>
+            </Box>
+            <FormControlLabel
+                control={
+                    <Switch {...register('useTemplate')} color="primary" />
+                }
+                label="Use Template"
+            />
+
+            {isBulk ? (
+                <>
+                    {' '}
+                    <EmailFormComponent
+                        onSubmit={onSubmit}
+                        register={register}
+                        errors={errors}
+                        useTemplate={useTemplate}
+                        templates={templates}
+                        setSelectedTemplate={setSelectedTemplate}
+                        isBulk={isBulk}
                     />
-                </DialogContent>
-            </Dialog>
+                    <CsvComponent
+                        templates={templates}
+                        setSelectedTemplate={setSelectedTemplate}
+                    />
+                </>
+            ) : (
+                <EmailFormComponent
+                    onSubmit={onSubmit}
+                    register={register}
+                    errors={errors}
+                    useTemplate={useTemplate}
+                    templates={templates}
+                    setSelectedTemplate={setSelectedTemplate}
+                    isBulk={isBulk}
+                />
+            )}
         </>
     );
 };

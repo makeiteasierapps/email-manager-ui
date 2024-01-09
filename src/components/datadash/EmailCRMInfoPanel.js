@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import {
     Box,
     Table,
@@ -9,18 +9,20 @@ import {
     TableRow,
 } from '@mui/material';
 import axios from 'axios';
+import { AuthContext } from '../../context/AuthContext';
 
 const EmailCRMInfoPanel = () => {
     const [data, setData] = useState([]);
+    const { uid } = useContext(AuthContext);
 
     useEffect(() => {
         const handleFetch = async () => {
             try {
                 const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/email-data`
+                    `${process.env.REACT_APP_BACKEND_URL}/email-data?uid=${uid}`
                 );
-                setData(response.data);
                 console.log(response.data);
+                setData(response.data);
             } catch (error) {
                 console.error(error);
             }
