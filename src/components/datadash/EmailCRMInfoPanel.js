@@ -45,16 +45,16 @@ const EmailCRMInfoPanel = () => {
                 </TableHead>
                 <TableBody>
                     {data.map((row) => (
-                        <TableRow key={row.recipient_email}>
+                        <TableRow key={row.to_email}>
                             <TableCell>
                                 {row.follow_up_1_sent.toString()}
                             </TableCell>
                             <TableCell>
                                 {row.follow_up_2_sent.toString()}
                             </TableCell>
-                            <TableCell>{row.recipient_company}</TableCell>
-                            <TableCell>{row.recipient_email}</TableCell>
-                            <TableCell>{row.recipient_name}</TableCell>
+                            <TableCell>{row.to_company}</TableCell>
+                            <TableCell>{row.to_email}</TableCell>
+                            <TableCell>{row.to_name}</TableCell>
                             <TableCell>
                                 {row.response_received.toString()}
                             </TableCell>

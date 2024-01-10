@@ -9,8 +9,6 @@ import {
     FormControlLabel,
     Card,
     CardContent,
-    Dialog,
-    DialogContent,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
@@ -29,10 +27,10 @@ const createEmailTemplate = (values) => {
     const templates = [
         {
             id: 1,
-            subject: `Press and Media Opportunities for ${values.recipient_company}`,
+            subject: `Press and Media Opportunities for ${values.to_company}`,
             content: `
                 <p>
-                    Hi ${values.recipient_name},
+                    Hi ${values.to_name},
                 </p>
                 <p>
                     Thanks for connecting with us. We appreciate your brand and have been following your success!
@@ -50,10 +48,10 @@ const createEmailTemplate = (values) => {
         },
         {
             id: 2,
-            subject: `Press and Media Opportunities for ${values.recipient_company}`,
+            subject: `Press and Media Opportunities for ${values.to_company}`,
             content: `
                 <p>
-                    Hi ${values.recipient_name},
+                    Hi ${values.to_name},
                 </p>
                 <p>
                     My name is ${values.sender_name}, I am the Account Director at AmazingCo. Our team asked me to personally reach out to you and see who is the best contact on your team to discuss strategies for increasing your brand's exposure with press and media opportunities?
@@ -74,13 +72,13 @@ const createEmailTemplate = (values) => {
 };
 
 const validationSchema = yup.object({
-    sender_name: yup.string().required('Sender Name is required'),
-    recipient_email: yup
+    from_name: yup.string().required('Sender Name is required'),
+    to_email: yup
         .string()
         .email('Enter a valid email')
         .required('Email is required'),
-    recipient_name: yup.string().required('Recipient Name is required'),
-    recipient_company: yup.string().required('Recipient Company is required'),
+    to_name: yup.string().required('Recipient Name is required'),
+    to_company: yup.string().required('Recipient Company is required'),
     subject: yup
         .string()
         .test('useTemplate', 'Subject is required', function (value) {
@@ -96,10 +94,10 @@ const validationSchema = yup.object({
 });
 
 const formFields = [
-    { id: 'sender_name', label: 'Sender Name' },
-    { id: 'recipient_email', label: 'Recipient Email' },
-    { id: 'recipient_name', label: 'Recipient Name' },
-    { id: 'recipient_company', label: 'Recipient Company' },
+    { id: 'from_name', label: 'From' },
+    { id: 'to_email', label: 'Recipient Email' },
+    { id: 'to_name', label: 'Recipient Name' },
+    { id: 'to_company', label: 'Company Name' },
     { id: 'subject', label: 'Subject' },
     { id: 'message', label: 'Message', multiline: true, rows: 4 },
 ];
@@ -132,6 +130,7 @@ const TemplateCarousel = ({ templates, setSelectedTemplate }) => {
 
 const EmailFormComponent = ({
     onSubmit,
+    handleSubmit,
     register,
     errors,
     useTemplate,
@@ -140,15 +139,12 @@ const EmailFormComponent = ({
     isBulk,
 }) => {
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             {formFields.map((field) =>
                 isBulk &&
-                [
-                    'recipient_email',
-                    'recipient_name',
-                    'recipient_company',
-                ].includes(field.id) ? null : field.id === 'message' &&
-                  useTemplate ? (
+                ['to_email', 'to_name', 'to_company'].includes(
+                    field.id
+                ) ? null : field.id === 'message' && useTemplate ? (
                     <TemplateCarousel
                         templates={templates}
                         setSelectedTemplate={setSelectedTemplate}
@@ -187,6 +183,7 @@ const EmailForm = () => {
         handleSubmit,
         formState: { errors },
         watch,
+        reset,
     } = useForm({
         resolver: yupResolver(validationSchema),
     });
@@ -210,11 +207,11 @@ const EmailForm = () => {
 
     const onSubmit = async (values) => {
         const emailTemplate = {
-            sender_email: 'test@mg.shauno.co',
-            sender_name: values.sender_name,
-            email: values.recipient_email,
-            recipient_name: values.recipient_name,
-            recipient_company: values.recipient_company,
+            from_email: 'test@mg.shauno.co',
+            from_name: values.from_name,
+            to_email: values.to_email,
+            to_name: values.to_name,
+            to_company: values.to_company,
             subject:
                 useTemplate && selectedTemplate
                     ? selectedTemplate.subject
@@ -224,6 +221,7 @@ const EmailForm = () => {
                     ? selectedTemplate.content
                     : values.message,
         };
+
         const data = {
             uid: uid,
             emailTemplates: emailTemplate,
@@ -239,6 +237,12 @@ const EmailForm = () => {
                     },
                 }
             );
+            if (response.status === 200) {
+                alert(`Email sent successfully: ${response.data}`);
+                reset();
+            } else {
+                alert(`Failed to send email: ${response.data}`);
+            }
         } catch (error) {
             console.error(
                 'There has been a problem with your login operation:',
@@ -281,9 +285,9 @@ const EmailForm = () => {
 
             {isBulk ? (
                 <>
-                    {' '}
                     <EmailFormComponent
                         onSubmit={onSubmit}
+                        handleSubmit={handleSubmit}
                         register={register}
                         errors={errors}
                         useTemplate={useTemplate}
@@ -299,6 +303,7 @@ const EmailForm = () => {
             ) : (
                 <EmailFormComponent
                     onSubmit={onSubmit}
+                    handleSubmit={handleSubmit}
                     register={register}
                     errors={errors}
                     useTemplate={useTemplate}
