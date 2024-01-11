@@ -1,42 +1,56 @@
 import { useState } from 'react';
-import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import EmailForm from '../components/email/EmailForm';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MailIcon from '@mui/icons-material/Mail';
+import InfoIcon from '@mui/icons-material/Info';
+import EmailManager from '../components//emailManager/EmailManager';
 import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
+
+import { ManagerProvider } from '../components/emailManager/ManagerContext';
 
 const Home = () => {
     const [value, setValue] = useState(0);
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
     return (
-        <Container component="main" sx={{ height: '100vh', width: '100%' }}>
+        <Box component="main" sx={{ height: '100vh', width: '100%' }}>
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        aria-label="send"
+                        onClick={() => setValue(0)}
+                    >
+                        <MailIcon />
+                    </IconButton>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        aria-label="info"
+                        onClick={() => setValue(1)}
+                    >
+                        <InfoIcon />
+                    </IconButton>
+                </Toolbar>
+            </AppBar>
             <Box
                 sx={{
-                    marginTop: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}
             >
-                <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="simple tabs example"
-                >
-                    <Tab label="Send" />
-                    
-                    <Tab label="Email Info" />
-                </Tabs>
-                {value === 0 && <EmailForm />}
+                {value === 0 && (
+                    <ManagerProvider>
+                        <EmailManager />
+                    </ManagerProvider>
+                )}
                 {value === 1 && <EmailCRMInfoPanel />}
             </Box>
-        </Container>
+        </Box>
     );
-}
+};
 
 export default Home;

@@ -1,10 +1,15 @@
+import { useContext } from 'react';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDropzone } from 'react-dropzone';
 import { useCallback } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
+import { ManagerContext } from '../ManagerContext';
 
-const CsvDropzone = ({ selectedFile, setSelectedFile, setFile }) => {
+const FileDropZone = () => {
+    const { setFile, selectedFile, setSelectedFile } =
+        useContext(ManagerContext);
+
     const handleFileChange = useCallback(
         (selectedFile) => {
             setFile(selectedFile);
@@ -68,4 +73,4 @@ const CsvDropzone = ({ selectedFile, setSelectedFile, setFile }) => {
     );
 };
 
-export default CsvDropzone;
+export default FileDropZone;
