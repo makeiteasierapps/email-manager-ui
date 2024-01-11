@@ -12,7 +12,6 @@ import CsvComponent from './dataExtract/Csv';
 
 const FormContainer = styled('div')({
     width: '70%',
-    height: '90vh',
 });
 
 const createEmailTemplate = (values) => {
@@ -165,7 +164,13 @@ const EmailManager = () => {
     };
 
     return (
-        <>
+        <Box
+            display={'flex'}
+            flexDirection={'column'}
+            width={'100%'}
+            height={'90vh'}
+            alignItems={'center'}
+        >
             <Box
                 display={'flex'}
                 justifyContent={'center'}
@@ -206,11 +211,13 @@ const EmailManager = () => {
                             onSubmit={onSubmit}
                             handleSubmit={handleSubmit}
                             register={register}
+                            watch={watch}
                             errors={errors}
                             useTemplate={useTemplate}
                             templates={templates}
                             setSelectedTemplate={setSelectedTemplate}
                             isBulk={isBulk}
+                            reset={reset}
                         />
                     </>
                 ) : (
@@ -218,15 +225,17 @@ const EmailManager = () => {
                         onSubmit={onSubmit}
                         handleSubmit={handleSubmit}
                         register={register}
+                        watch={watch}
                         errors={errors}
                         useTemplate={useTemplate}
                         templates={templates}
                         setSelectedTemplate={setSelectedTemplate}
                         isBulk={isBulk}
+                        reset={reset}
                     />
                 )}
             </FormContainer>
-        </>
+        </Box>
     );
 };
 

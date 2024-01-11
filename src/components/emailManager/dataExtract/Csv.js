@@ -14,7 +14,8 @@ import FileDropZone from './FileDropZone';
 import { ManagerContext } from '../ManagerContext';
 
 const Csv = () => {
-    const { dataList, handleUpload } = useContext(ManagerContext);
+    const { dataList, handleUpload, selectedRow, setSelectedRow } =
+        useContext(ManagerContext);
 
     return (
         <>
@@ -40,7 +41,18 @@ const Csv = () => {
                         </TableHead>
                         <TableBody>
                             {dataList.map((row, index) => (
-                                <TableRow key={index}>
+                                <TableRow
+                                    key={index}
+                                    onClick={() => {
+                                        setSelectedRow(index);
+                                        console.log(row);
+                                    }}
+                                    style={
+                                        selectedRow === index
+                                            ? { backgroundColor: 'lightgray' }
+                                            : {}
+                                    }
+                                >
                                     <TableCell align={'center'}>
                                         {row.first_name}
                                     </TableCell>

@@ -10,7 +10,7 @@ export const ManagerProvider = ({ children }) => {
     const [emailTemplates, setEmailTemplates] = useState([]);
     const [isSending, setIsSending] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const { uid } = useContext(AuthContext);
+    const [selectedRow, setSelectedRow] = useState(null);
 
     const handleUpload = async () => {
         if (!file) {
@@ -37,24 +37,29 @@ export const ManagerProvider = ({ children }) => {
         }
     };
 
-    const handleSendCsvEmails = async () => {
+    const handleSendCsvEmails = async (emailData, reset) => {
         setIsSending(true);
-        const data = { user_id: uid, emailTemplates };
+
         try {
-            await axios.post(
+            const response = await axios.post(
                 `${process.env.REACT_APP_BACKEND_URL}/send`,
-                data,
+                emailData,
                 {
                     headers: {
                         'Auth-Key': process.env.REACT_APP_MY_AUTH_KEY,
                     },
                 }
             );
-            alert('Emails sent successfully');
-            setIsSending(false);
-            setEmailTemplates([]);
-            setDataList([]);
-            setSelectedFile(null);
+            if (response.status === 200) {
+                alert('Emails sent successfully');
+                setIsSending(false);
+                setEmailTemplates([]);
+                setDataList([]);
+                setSelectedFile(null);
+                reset();
+            } else {
+                alert('Failed to send emails');
+            }
         } catch (error) {
             console.error(error);
             alert('Failed to send emails');
@@ -71,6 +76,9 @@ export const ManagerProvider = ({ children }) => {
                 selectedFile,
                 setSelectedFile,
                 isSending,
+                selectedRow,
+                setSelectedRow,
+                emailTemplates,
             }}
         >
             {children}

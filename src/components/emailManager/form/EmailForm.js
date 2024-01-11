@@ -1,7 +1,10 @@
+import { useContext } from 'react';
 import { styled } from '@mui/system';
 import { TextField, Button, Card, CardContent } from '@mui/material';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { ManagerContext } from '../ManagerContext';
+import { AuthContext } from '../../../context/AuthContext';
 
 const StyledField = styled(TextField)(({ theme }) => ({
     marginBottom: theme.spacing(2),
@@ -46,12 +49,36 @@ const EmailForm = ({
     onSubmit,
     handleSubmit,
     register,
+    watch,
     errors,
     useTemplate,
     templates,
     setSelectedTemplate,
     isBulk,
+    reset,
 }) => {
+    const { dataList, isSending, handleSendCsvEmails } =
+        useContext(ManagerContext);
+    const { uid } = useContext(AuthContext);
+    const from_name = watch('from_name');
+    const subject = watch('subject');
+    const message = watch('message');
+
+    const isFormValid = from_name && subject && message;
+
+    const data = {
+        uid: uid,
+        emailTemplates: dataList.map((item) => ({
+            to_name: item.first_name,
+            to_email: item.email,
+            to_company: item.company,
+            from_name,
+            subject,
+            message,
+            from_email: 'test@mg.shauno.co',
+        })),
+    };
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             {formFields.map((field) =>
@@ -88,21 +115,23 @@ const EmailForm = ({
                 >
                     Submit
                 </Button>
-            ) : null}
+            ) : (
+                isFormValid &&
+                dataList.length > 0 && (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                            handleSendCsvEmails(data, reset);
+                        }}
+                        disabled={isSending}
+                    >
+                        Send Emails
+                    </Button>
+                )
+            )}
         </form>
     );
 };
 
 export default EmailForm;
-
-
-// {emailTemplates.length > 0 && dataList.length > 0 && (
-//     <Button
-//         variant="contained"
-//         color="primary"
-//         onClick={handleSendCsvEmails}
-//         disabled={isSending}
-//     >
-//         Send Emails
-//     </Button>
-// )}
