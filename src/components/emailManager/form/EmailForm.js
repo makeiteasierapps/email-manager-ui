@@ -1,8 +1,7 @@
 import { useContext } from 'react';
 import { styled } from '@mui/system';
-import { TextField, Button, Card, CardContent } from '@mui/material';
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Button, TextField, Switch, FormControlLabel } from '@mui/material';
+import TemplateCarousel from '../TemplateCarousel';
 import { ManagerContext } from '../ManagerContext';
 import { AuthContext } from '../../../context/AuthContext';
 
@@ -18,32 +17,6 @@ const formFields = [
     { id: 'subject', label: 'Subject' },
     { id: 'message', label: 'Message', multiline: true, rows: 4 },
 ];
-
-const TemplateCarousel = ({ templates, setSelectedTemplate }) => {
-    return (
-        <Carousel
-            showThumbs={false}
-            onChange={(index) => setSelectedTemplate(templates[index])}
-        >
-            {templates.map((template) => (
-                <div key={template.id}>
-                    <Card>
-                        <CardContent>
-                            <div>
-                                <strong>Subject:</strong> {template.subject}
-                            </div>
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: template.content,
-                                }}
-                            />
-                        </CardContent>
-                    </Card>
-                </div>
-            ))}
-        </Carousel>
-    );
-};
 
 const EmailForm = ({
     onSubmit,
@@ -80,57 +53,65 @@ const EmailForm = ({
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            {formFields.map((field) =>
-                isBulk &&
-                ['to_email', 'to_name', 'to_company'].includes(
-                    field.id
-                ) ? null : field.id === 'message' && useTemplate ? (
-                    <TemplateCarousel
-                        templates={templates}
-                        setSelectedTemplate={setSelectedTemplate}
-                    />
-                ) : field.id === 'subject' && useTemplate ? null : (
-                    <StyledField
-                        key={field.id}
-                        fullWidth
-                        name={field.id}
-                        label={field.label}
-                        {...register(field.id)}
-                        error={!!errors[field.id]}
-                        helperText={errors[field.id]?.message}
-                        {...(field.multiline && {
-                            multiline: true,
-                            rows: field.rows,
-                        })}
-                    />
-                )
-            )}
-            {!isBulk ? (
-                <Button
-                    color="primary"
-                    variant="contained"
-                    fullWidth
-                    type="submit"
-                >
-                    Submit
-                </Button>
-            ) : (
-                isFormValid &&
-                dataList.length > 0 && (
+        <>
+            <FormControlLabel
+                control={
+                    <Switch {...register('useTemplate')} color="primary" />
+                }
+                label="Use Template"
+            />
+            <form onSubmit={handleSubmit(onSubmit)}>
+                {formFields.map((field) =>
+                    isBulk &&
+                    ['to_email', 'to_name', 'to_company'].includes(
+                        field.id
+                    ) ? null : field.id === 'message' && useTemplate ? (
+                        <TemplateCarousel
+                            templates={templates}
+                            setSelectedTemplate={setSelectedTemplate}
+                        />
+                    ) : field.id === 'subject' && useTemplate ? null : (
+                        <StyledField
+                            key={field.id}
+                            fullWidth
+                            name={field.id}
+                            label={field.label}
+                            {...register(field.id)}
+                            error={!!errors[field.id]}
+                            helperText={errors[field.id]?.message}
+                            {...(field.multiline && {
+                                multiline: true,
+                                rows: field.rows,
+                            })}
+                        />
+                    )
+                )}
+                {!isBulk ? (
                     <Button
-                        variant="contained"
                         color="primary"
-                        onClick={() => {
-                            handleSendCsvEmails(data, reset);
-                        }}
-                        disabled={isSending}
+                        variant="contained"
+                        fullWidth
+                        type="submit"
                     >
-                        Send Emails
+                        Submit
                     </Button>
-                )
-            )}
-        </form>
+                ) : (
+                    isFormValid &&
+                    dataList.length > 0 && (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                                handleSendCsvEmails(data, reset);
+                            }}
+                            disabled={isSending}
+                        >
+                            Send Emails
+                        </Button>
+                    )
+                )}
+            </form>
+        </>
     );
 };
 

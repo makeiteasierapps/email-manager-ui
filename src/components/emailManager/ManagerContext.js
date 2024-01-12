@@ -1,6 +1,5 @@
-import { useState, createContext, useContext } from 'react';
+import { useState, createContext } from 'react';
 import axios from 'axios';
-import { AuthContext } from '../../context/AuthContext';
 
 export const ManagerContext = createContext();
 
@@ -10,7 +9,7 @@ export const ManagerProvider = ({ children }) => {
     const [emailTemplates, setEmailTemplates] = useState([]);
     const [isSending, setIsSending] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedRow, setSelectedRow] = useState(null);
+    const [selectedRow, setSelectedRow] = useState({});
 
     const handleUpload = async () => {
         if (!file) {
@@ -31,7 +30,9 @@ export const ManagerProvider = ({ children }) => {
                     },
                 }
             );
-            setDataList(response.data.results);
+            if (response.status === 200) {
+                setDataList(response.data.results);
+            }
         } catch (error) {
             console.error(error);
         }

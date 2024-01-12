@@ -13,7 +13,7 @@ import {
 import FileDropZone from './FileDropZone';
 import { ManagerContext } from '../ManagerContext';
 
-const Csv = () => {
+const ExtractedDataTable = () => {
     const { dataList, handleUpload, selectedRow, setSelectedRow } =
         useContext(ManagerContext);
 
@@ -44,11 +44,18 @@ const Csv = () => {
                                 <TableRow
                                     key={index}
                                     onClick={() => {
-                                        setSelectedRow(index);
+                                        setSelectedRow({
+                                            index,
+                                            data: {
+                                                to_name: row.first_name,
+                                                to_email: row.email,
+                                                to_company: row.company,
+                                            },
+                                        });
                                         console.log(row);
                                     }}
                                     style={
-                                        selectedRow === index
+                                        selectedRow.index === index
                                             ? { backgroundColor: 'lightgray' }
                                             : {}
                                     }
@@ -72,4 +79,4 @@ const Csv = () => {
     );
 };
 
-export default Csv;
+export default ExtractedDataTable;
