@@ -46,13 +46,8 @@ const ExtractedDataTable = () => {
                                     onClick={() => {
                                         setSelectedRow({
                                             index,
-                                            data: {
-                                                to_name: row.first_name,
-                                                to_email: row.email,
-                                                to_company: row.company,
-                                            },
+                                            ...row,
                                         });
-                                        console.log(row);
                                     }}
                                     style={
                                         selectedRow.index === index

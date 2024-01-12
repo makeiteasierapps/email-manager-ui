@@ -6,11 +6,11 @@ export const ManagerContext = createContext();
 export const ManagerProvider = ({ children }) => {
     const [file, setFile] = useState(null);
     const [dataList, setDataList] = useState([]);
-    const [emailTemplates, setEmailTemplates] = useState([]);
     const [isSending, setIsSending] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedRow, setSelectedRow] = useState({});
+    const [selectedRow, setSelectedRow] = useState(null);
 
+    // Handles extracting data from the CSV file
     const handleUpload = async () => {
         if (!file) {
             alert('Please select a file first');
@@ -32,6 +32,7 @@ export const ManagerProvider = ({ children }) => {
             );
             if (response.status === 200) {
                 setDataList(response.data.results);
+                setSelectedRow({index: 0, ...response.data.results[0]});
             }
         } catch (error) {
             console.error(error);
@@ -54,7 +55,6 @@ export const ManagerProvider = ({ children }) => {
             if (response.status === 200) {
                 alert('Emails sent successfully');
                 setIsSending(false);
-                setEmailTemplates([]);
                 setDataList([]);
                 setSelectedFile(null);
                 reset();
@@ -79,7 +79,6 @@ export const ManagerProvider = ({ children }) => {
                 isSending,
                 selectedRow,
                 setSelectedRow,
-                emailTemplates,
             }}
         >
             {children}

@@ -4,7 +4,6 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 
 export const createEmailTemplate = (values) => {
-    console.log(values);
     const templates = [
         {
             id: 1,
@@ -35,7 +34,7 @@ export const createEmailTemplate = (values) => {
                     Hi ${values.to_name},
                 </p>
                 <p>
-                    My name is ${values.sender_name}, I am the Account Director at AmazingCo. Our team asked me to personally reach out to you and see who is the best contact on your team to discuss strategies for increasing your brand's exposure with press and media opportunities?
+                    My name is ${values.from_name}, I am the Account Director at AmazingCo. Our team asked me to personally reach out to you and see who is the best contact on your team to discuss strategies for increasing your brand's exposure with press and media opportunities?
                 </p>
                 <p>
                     We have a successful track record of assisting clients in securing 500+ press features, orchestrating events, TV Interviews, Podcasts and generating millions of social impressions for them. <a href="https://www.example.com" target="_blank">Here's a link</a> to our deck showcasing some of our past work.
