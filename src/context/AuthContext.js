@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import {
     getAuth,
+    GithubAuthProvider,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -15,11 +16,11 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const auth = getAuth(app);
+const provider = new GithubAuthProvider();
+const AuthContext = createContext();
 
-export const AuthContext = createContext();
-
-export const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
     const [idToken, setIdToken] = useState(null);
     const [uid, setUid] = useState(null);
     const [user, setUser] = useState(null);
@@ -45,3 +46,5 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+export {AuthProvider, AuthContext, auth, provider};

@@ -1,16 +1,20 @@
 import { useContext } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import {
+    Avatar,
+    Button,
+    TextField,
+    Box,
+    Typography,
+    Container,
+} from '@mui/material';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { AuthContext } from '../context/AuthContext';
-import { auth } from '../context/AuthContext';
+import { auth, provider } from '../context/AuthContext';
 
 const validationSchema = yup.object({
     email: yup
@@ -22,6 +26,19 @@ const validationSchema = yup.object({
         .min(8, 'Password should be of minimum 8 characters length')
         .required('Password is required'),
 });
+
+const signInWithGithub = async () => {
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log(user);
+    } catch (error) {
+        console.error(
+            'There has been a problem with your login operation:',
+            error
+        );
+    }
+};
 
 const Login = () => {
     const { setUser } = useContext(AuthContext);
@@ -115,10 +132,19 @@ const Login = () => {
                     >
                         Sign In
                     </Button>
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        startIcon={<GitHubIcon />}
+                        onClick={signInWithGithub}
+                        sx={{ mt: 2 }}
+                    >
+                        Sign In with Github
+                    </Button>
                 </Box>
             </Box>
         </Container>
     );
-}
+};
 
 export default Login;
