@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import {  AuthContext } from './context/AuthContext';
+import { AuthContext } from './context/AuthContext';
 
 const AuthenticatedRoutes = () => {
     const navigate = useNavigate();
@@ -31,28 +31,25 @@ const App = () => {
 
     return (
         <Router>
-                <Routes>
-                    {isAuthorized ? (
-                        <>
-                            <Route
-                                path="/home"
-                                element={<AuthenticatedRoutes />}
-                            />
-                            <Route
-                                path="*"
-                                element={<Navigate replace to="/home" />}
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <Route path="/login" element={<Login />} />
-                            <Route
-                                path="*"
-                                element={<Navigate replace to="/login" />}
-                            />
-                        </>
-                    )}
-                </Routes>
+            <Routes>
+                {isAuthorized ? (
+                    <>
+                        <Route path="/home" element={<AuthenticatedRoutes />} />
+                        <Route
+                            path="*"
+                            element={<Navigate replace to="/home" />}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <Route path="/login" element={<Login />} />
+                        <Route
+                            path="*"
+                            element={<Navigate replace to="/login" />}
+                        />
+                    </>
+                )}
+            </Routes>
         </Router>
     );
 };

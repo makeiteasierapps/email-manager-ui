@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
+import { Toolbar, IconButton, AppBar, Box } from '@mui/material';
 import MailIcon from '@mui/icons-material/Mail';
 import InfoIcon from '@mui/icons-material/Info';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { signOut } from 'firebase/auth';
+import { auth } from '../context/AuthContext';
 import EmailManager from '../components//emailManager/EmailManager';
 import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
 
@@ -13,25 +13,43 @@ import { ManagerProvider } from '../components/emailManager/ManagerContext';
 const Home = () => {
     const [value, setValue] = useState(0);
 
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            console.log('Logged out');
+        } catch (error) {
+            console.error('Error logging out', error);
+        }
+    };
+
     return (
         <Box component="main" sx={{ height: '100vh', width: '100%' }}>
             <AppBar position="static">
                 <Toolbar>
+                    <Box flexGrow={1}>
+                        <IconButton
+                            color="inherit"
+                            aria-label="send"
+                            onClick={() => setValue(0)}
+                        >
+                            <MailIcon />
+                        </IconButton>
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            aria-label="info"
+                            onClick={() => setValue(1)}
+                        >
+                            <InfoIcon />
+                        </IconButton>
+                    </Box>
+
                     <IconButton
-                        edge="start"
                         color="inherit"
-                        aria-label="send"
-                        onClick={() => setValue(0)}
+                        aria-label="logout"
+                        onClick={handleLogout}
                     >
-                        <MailIcon />
-                    </IconButton>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="info"
-                        onClick={() => setValue(1)}
-                    >
-                        <InfoIcon />
+                        <ExitToAppIcon />
                     </IconButton>
                 </Toolbar>
             </AppBar>

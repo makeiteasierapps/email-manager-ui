@@ -1,9 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
-import {
-    getAuth,
-    GithubAuthProvider,
-} from 'firebase/auth';
+import { getAuth, GithubAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -26,25 +23,25 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        auth.onAuthStateChanged(function (user) {
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
-                user.getIdToken().then(function (token) {
-                    setIdToken(token);
-                    setUid(user.uid);
-                    setUser(user);
-                });
+                const token = await user.getIdToken();
+                setIdToken(token);
+                setUid(user.uid);
+                setUser(user);
             } else {
-                console.log('No user is signed in.');
+                setIdToken(null);
+                setUid(null);
+                setUser(null);
             }
         });
     }, []);
 
-
     return (
-        <AuthContext.Provider value={{ idToken, uid, user }}>
+        <AuthContext.Provider value={{ idToken, uid, user, setUser }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-export {AuthProvider, AuthContext, auth, provider};
+export { AuthProvider, AuthContext, auth, provider };
