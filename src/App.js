@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import { AuthContext } from './context/AuthContext';
+import { AuthContext, } from './context/AuthContext'
 
 const AuthenticatedRoutes = () => {
     const navigate = useNavigate();

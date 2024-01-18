@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Toolbar, IconButton, AppBar, Box } from '@mui/material';
 import MailIcon from '@mui/icons-material/Mail';
 import InfoIcon from '@mui/icons-material/Info';
+import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { signOut } from 'firebase/auth';
 import { auth } from '../context/AuthContext';
 import EmailManager from '../components//emailManager/EmailManager';
 import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
+import Profile from '../pages/Profile';
 
 import { ManagerProvider } from '../components/emailManager/ManagerContext';
 
@@ -28,9 +30,18 @@ const Home = () => {
                 <Toolbar>
                     <Box flexGrow={1}>
                         <IconButton
+                            edge="start"
                             color="inherit"
                             aria-label="send"
                             onClick={() => setValue(0)}
+                        >
+                            <PersonIcon />
+                        </IconButton>
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            aria-label="send"
+                            onClick={() => setValue(1)}
                         >
                             <MailIcon />
                         </IconButton>
@@ -38,7 +49,7 @@ const Home = () => {
                             edge="start"
                             color="inherit"
                             aria-label="info"
-                            onClick={() => setValue(1)}
+                            onClick={() => setValue(2)}
                         >
                             <InfoIcon />
                         </IconButton>
@@ -60,12 +71,14 @@ const Home = () => {
                     alignItems: 'center',
                 }}
             >
-                {value === 0 && (
+                {value === 0 && <Profile />}
+                {value === 1 && (
                     <ManagerProvider>
                         <EmailManager />
                     </ManagerProvider>
                 )}
-                {value === 1 && <EmailCRMInfoPanel />}
+                {value === 2 && <EmailCRMInfoPanel />}
+
             </Box>
         </Box>
     );
