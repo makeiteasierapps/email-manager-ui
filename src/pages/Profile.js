@@ -1,6 +1,16 @@
 import { useContext, useState } from 'react';
+import axios from 'axios';
 import { AuthContext, auth } from '../context/AuthContext';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    TextField,
+    Typography,
+    Avatar,
+    IconButton,
+    Collapse,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     updatePassword,
     reauthenticateWithCredential,
@@ -8,9 +18,12 @@ import {
 } from 'firebase/auth';
 
 const Profile = () => {
-    const { user } = useContext(AuthContext);
+    const { user, uid } = useContext(AuthContext);
+    const [mailgunApiKey, setMailgunApiKey] = useState('');
+    const [mailgunDomain, setMailgunDomain] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
+    const [expanded, setExpanded] = useState(false);
     console.log(user);
 
     const handleUpdatePassword = async () => {
@@ -31,38 +44,100 @@ const Profile = () => {
         }
     };
 
+    const handleUpdateProfile = async () => {
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/profile`,
+                {
+                    uid,
+                    mailgunApiKey,
+                    mailgunDomain,
+                }
+            );
+            console.log(response.data);
+            alert('Profile updated successfully!');
+            setMailgunApiKey('');
+            setMailgunDomain('');
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <Box
             display="flex"
             flexDirection="column"
             width="50%"
+            marginTop={2}
             gap={2}
             alignItems={'center'}
         >
-            <Typography variant="h5">{user.email}</Typography>
+            <Box display="flex" flexDirection="row" gap alignItems="center">
+                {user && (
+                    <>
+                        <Avatar src={user.photoURL} />
+                        <Typography variant="h5">{user.displayName}</Typography>
+                    </>
+                )}
+            </Box>
 
             <Box display="flex" flexDirection="column" gap>
                 <TextField
-                    label="New Password"
+                    label="Mailgun API Key"
                     type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    value={mailgunApiKey}
+                    onChange={(e) => setMailgunApiKey(e.target.value)}
                 />
 
                 <TextField
-                    label="Current Password"
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    label="Domain i.e. shauno.co or mg.shauno.co"
+                    value={mailgunDomain}
+                    onChange={(e) => setMailgunDomain(e.target.value)}
                 />
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleUpdatePassword}
+                    onClick={handleUpdateProfile}
                 >
-                    Change Password
+                    Save
                 </Button>
             </Box>
+
+            <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
+                <IconButton
+                    onClick={() => setExpanded(!expanded)}
+                    aria-expanded={expanded}
+                    aria-label="show more"
+                >
+                    <ExpandMoreIcon />
+                </IconButton>
+                <Typography onClick={() => setExpanded(!expanded)}>
+                    Change Password
+                </Typography>
+            </Box>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <Box display="flex" flexDirection="row" gap alignItems="center">
+                    <TextField
+                        label="New Password"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                    <TextField
+                        label="Current Password"
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleUpdatePassword}
+                    >
+                        Change Password
+                    </Button>
+                </Box>
+            </Collapse>
         </Box>
     );
 };
