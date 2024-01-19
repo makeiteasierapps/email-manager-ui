@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext, auth } from '../context/AuthContext';
 import {
@@ -17,6 +17,8 @@ import {
     EmailAuthProvider,
 } from 'firebase/auth';
 
+import WelcomeModal from '../components/WelcomeModal';
+
 const Profile = () => {
     const { user, uid } = useContext(AuthContext);
     const [mailgunApiKey, setMailgunApiKey] = useState('');
@@ -24,7 +26,11 @@ const Profile = () => {
     const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [expanded, setExpanded] = useState(false);
-    console.log(user);
+    const { hasMailgunConfig, setHasMailgunConfig } = useContext(AuthContext);
+
+
+
+    
 
     const handleUpdatePassword = async () => {
         // Reauthenticate before updating the password
@@ -138,6 +144,10 @@ const Profile = () => {
                     </Button>
                 </Box>
             </Collapse>
+            <WelcomeModal
+                open={!hasMailgunConfig}
+                onClose={() => setHasMailgunConfig(true)}
+            />
         </Box>
     );
 };

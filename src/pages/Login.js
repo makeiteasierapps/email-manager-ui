@@ -1,5 +1,10 @@
 import { useContext } from 'react';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import {
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    getAdditionalUserInfo,
+} from 'firebase/auth';
+import axios from 'axios';
 import {
     Avatar,
     Button,
@@ -27,11 +32,54 @@ const validationSchema = yup.object({
         .required('Password is required'),
 });
 
-const signInWithGithub = async () => {
+const signInWithGithub = async (setUser) => {
     try {
         const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        console.log(user);
+
+        const additionalUserInfo = getAdditionalUserInfo(result);
+        const isNewUser = additionalUserInfo.isNewUser;
+
+        if (isNewUser) {
+            try {
+                const response = await axios.post(
+                    `${process.env.REACT_APP_BACKEND_URL}/profile/create`,
+                    {
+                        uid: result.user.uid,
+                    }
+                );
+                setUser({
+                    uid: result.user.uid,
+                    photoURL: result.user.photoURL,
+                    displayName: result.user.displayName,
+                    ...response.data,
+                });
+            } catch (error) {
+                console.error(
+                    `There has been a problem with your fetch operation ${error}`
+                );
+            }
+        } else {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_URL}/profile`,
+                    {
+                        params: {
+                            uid: result.user.uid,
+                        },
+                    }
+                );
+                setUser({
+                    uid: result.user.uid,
+                    photoURL: result.user.photoURL,
+                    displayName: result.user.displayName,
+                    ...response.data,
+                });
+            } catch (error) {
+                console.error(
+                    `There has been a problem with your fetch operation: ${error}`
+                );
+            }
+        }
     } catch (error) {
         console.error(
             'There has been a problem with your login operation:',
@@ -136,7 +184,9 @@ const Login = () => {
                         fullWidth
                         variant="contained"
                         startIcon={<GitHubIcon />}
-                        onClick={signInWithGithub}
+                        onClick={() => {
+                            signInWithGithub(setUser);
+                        }}
                         sx={{ mt: 2 }}
                     >
                         Sign In with Github

@@ -21,14 +21,13 @@ const AuthProvider = ({ children }) => {
     const [idToken, setIdToken] = useState(null);
     const [uid, setUid] = useState(null);
     const [user, setUser] = useState(null);
+    const [hasMailgunConfig, setHasMailgunConfig] = useState(false);
 
     useEffect(() => {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 const token = await user.getIdToken();
                 setIdToken(token);
-                setUid(user.uid);
-                setUser(user);
             } else {
                 setIdToken(null);
                 setUid(null);
@@ -38,7 +37,16 @@ const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ idToken, uid, user, setUser }}>
+        <AuthContext.Provider
+            value={{
+                idToken,
+                uid,
+                user,
+                setUser,
+                hasMailgunConfig,
+                setHasMailgunConfig,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
