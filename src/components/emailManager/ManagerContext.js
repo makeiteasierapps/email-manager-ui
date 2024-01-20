@@ -32,7 +32,7 @@ export const ManagerProvider = ({ children }) => {
             );
             if (response.status === 200) {
                 setDataList(response.data.results);
-                setSelectedRow({index: 0, ...response.data.results[0]});
+                setSelectedRow({ index: 0, ...response.data.results[0] });
             }
         } catch (error) {
             console.error(error);
@@ -58,12 +58,10 @@ export const ManagerProvider = ({ children }) => {
                 setDataList([]);
                 setSelectedFile(null);
                 reset();
-            } else {
-                alert('Failed to send emails');
             }
         } catch (error) {
             console.error(error);
-            alert('Failed to send emails');
+            alert(error.response.data);
         }
     };
 

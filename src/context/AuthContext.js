@@ -104,7 +104,6 @@ const AuthProvider = ({ children }) => {
         const rehydrateUser = async () => {
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
-                console.log(`Rehydrating user from localStorage: ${storedUser}`);
                 const userData = JSON.parse(storedUser);
                 setUser(userData);
             } else if (auth.currentUser) {

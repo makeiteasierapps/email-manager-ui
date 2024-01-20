@@ -1,4 +1,4 @@
-// In a new file, e.g., src/components/MailgunConfigModal.js
+import axios from 'axios';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import {
@@ -10,13 +10,33 @@ import {
 } from '@mui/material';
 
 const MailgunConfigModal = ({ open, onClose }) => {
-    const { user } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
 
-    const handleUseTrial = () => {
-        // Set the API key and domain to admin account
-        // You will need to implement the logic to set these values
+    const handleUseTrial = async () => {
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/start-trial`,
+                {
+                    uid: user.uid,
+                    onTrial: true,
+                }
+            );
+            const { mailgunApiKey, mailgunDomain } = response.data;
 
-        onClose();
+            const updatedUser = {
+                ...user,
+                onTrial: true,
+                mailgunApiKey,
+                mailgunDomain,
+            };
+
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            onClose();
+            console.log(user);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleProvideOwn = () => {

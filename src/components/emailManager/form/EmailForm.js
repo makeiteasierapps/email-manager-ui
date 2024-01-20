@@ -151,16 +151,11 @@ const EmailForm = ({
                 }
             );
             if (response.status === 200) {
-                alert(`Email sent successfully: ${response.data}`);
+                alert(`Email sent successfully`);
                 reset();
-            } else {
-                alert(`Failed to send email: ${response.data}`);
             }
         } catch (error) {
-            console.error(
-                'There has been a problem with your login operation:',
-                error
-            );
+            alert(error.response.data);
         }
     };
 

@@ -20,13 +20,13 @@ import {
 import WelcomeModal from '../components/WelcomeModal';
 
 const Profile = () => {
-    const { user } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
     const [mailgunApiKey, setMailgunApiKey] = useState('');
     const [mailgunDomain, setMailgunDomain] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [expanded, setExpanded] = useState(false);
-    const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+    const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
     const handleUpdatePassword = async () => {
         // Reauthenticate before updating the password
@@ -49,14 +49,24 @@ const Profile = () => {
     const handleUpdateProfile = async () => {
         try {
             const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/profile`,
+                `${process.env.REACT_APP_BACKEND_URL}/profile/update`,
                 {
                     uid: user.uid,
                     mailgunApiKey,
                     mailgunDomain,
                 }
             );
-            console.log(response.data);
+
+            const updatedUser = {
+                ...user,
+                mailgunApiKey: response.data,
+                mailgunDomain,
+            };
+            setUser(updatedUser);
+
+            // Update local storage with new user details
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+
             alert('Profile updated successfully!');
             setMailgunApiKey('');
             setMailgunDomain('');
@@ -66,12 +76,12 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        setShowWelcomeModal(false);
-        if (user && !user.hasMailgunConfig) {
-            // Logic to open the modal
-            // Assuming you have a state to control the modal visibility
+        if (user) {
+            if (!user.onTrial && !user.hasMailgunConfig) {
+                setShowWelcomeModal(true);
+            }
         }
-    }, [user]); // Dependency array includes `user` to run the effect when the user object changes
+    }, [user]);
 
     return (
         <Box
@@ -150,7 +160,7 @@ const Profile = () => {
             </Collapse>
             <WelcomeModal
                 open={showWelcomeModal}
-                onClose={() => setShowWelcomeModal(true)}
+                onClose={() => setShowWelcomeModal(false)}
             />
         </Box>
     );
