@@ -13,13 +13,13 @@ import { AuthContext } from '../../context/AuthContext';
 
 const EmailCRMInfoPanel = () => {
     const [data, setData] = useState([]);
-    const { uid } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
         const handleFetch = async () => {
             try {
                 const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/email-data?uid=${uid}`
+                    `${process.env.REACT_APP_BACKEND_URL}/email-data?uid=${user.uid}`
                 );
                 console.log(response.data);
                 setData(response.data);
@@ -28,7 +28,7 @@ const EmailCRMInfoPanel = () => {
             }
         };
         handleFetch();
-    }, []);
+    }, [user.uid]);
 
     return (
         <TableContainer component={Box}>

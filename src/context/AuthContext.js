@@ -1,6 +1,12 @@
 import { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
 import { initializeApp } from 'firebase/app';
-import { getAuth, GithubAuthProvider } from 'firebase/auth';
+import {
+    getAuth,
+    GithubAuthProvider,
+    signInWithPopup,
+    getAdditionalUserInfo,
+} from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -19,32 +25,127 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [idToken, setIdToken] = useState(null);
-    const [uid, setUid] = useState(null);
     const [user, setUser] = useState(null);
-    const [hasMailgunConfig, setHasMailgunConfig] = useState(false);
+
+    const signInWithGithub = async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const additionalUserInfo = getAdditionalUserInfo(result);
+            const isNewUser = additionalUserInfo.isNewUser;
+
+            if (isNewUser) {
+                try {
+                    const response = await axios.post(
+                        `${process.env.REACT_APP_BACKEND_URL}/profile/create`,
+                        {
+                            uid: result.user.uid,
+                        }
+                    );
+                    const userData = {
+                        uid: result.user.uid,
+                        photoURL: result.user.photoURL,
+                        displayName: result.user.displayName,
+                        ...response.data,
+                    };
+                    setUser(userData);
+                    localStorage.setItem('user', JSON.stringify(userData));
+                } catch (error) {
+                    console.error(
+                        `There has been a problem with your fetch operation ${error}`
+                    );
+                }
+            } else {
+                try {
+                    const response = await axios.get(
+                        `${process.env.REACT_APP_BACKEND_URL}/profile`,
+                        {
+                            params: {
+                                uid: result.user.uid,
+                            },
+                        }
+                    );
+                    setUser({
+                        uid: result.user.uid,
+                        photoURL: result.user.photoURL,
+                        displayName: result.user.displayName,
+                        ...response.data,
+                    });
+                } catch (error) {
+                    console.error(
+                        `There has been a problem with your fetch operation: ${error}`
+                    );
+                }
+            }
+        } catch (error) {
+            console.error(
+                'There has been a problem with your login operation:',
+                error
+            );
+        }
+    };
 
     useEffect(() => {
+        const fetchUserData = async (uid) => {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_URL}/profile`,
+                    { params: { uid } }
+                );
+                return response.data;
+            } catch (error) {
+                console.error(
+                    'There has been a problem with your fetch operation:',
+                    error
+                );
+                return null;
+            }
+        };
+
+        const rehydrateUser = async () => {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                console.log(`Rehydrating user from localStorage: ${storedUser}`);
+                const userData = JSON.parse(storedUser);
+                setUser(userData);
+            } else if (auth.currentUser) {
+                // If there's a current user but no data in local storage, fetch from backend
+                const backendData = await fetchUserData(auth.currentUser.uid);
+                if (backendData) {
+                    const userData = {
+                        uid: auth.currentUser.uid,
+                        photoURL: auth.currentUser.photoURL,
+                        displayName: auth.currentUser.displayName,
+                        ...backendData,
+                    };
+                    setUser(userData);
+                    localStorage.setItem('user', JSON.stringify(userData));
+                }
+            }
+        };
+
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 const token = await user.getIdToken();
                 setIdToken(token);
+                await rehydrateUser(); // Rehydrate user data from localStorage or backend
             } else {
                 setIdToken(null);
-                setUid(null);
                 setUser(null);
+                localStorage.removeItem('user'); // Clear user data from localStorage
             }
         });
+
+        // Call rehydrateUser on initial load as well
+        rehydrateUser();
     }, []);
 
     return (
         <AuthContext.Provider
             value={{
                 idToken,
-                uid,
                 user,
                 setUser,
-                hasMailgunConfig,
-                setHasMailgunConfig,
+                signInWithGithub,
             }}
         >
             {children}

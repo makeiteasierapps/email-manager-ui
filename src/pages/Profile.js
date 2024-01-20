@@ -20,17 +20,13 @@ import {
 import WelcomeModal from '../components/WelcomeModal';
 
 const Profile = () => {
-    const { user, uid } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [mailgunApiKey, setMailgunApiKey] = useState('');
     const [mailgunDomain, setMailgunDomain] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [expanded, setExpanded] = useState(false);
-    const { hasMailgunConfig, setHasMailgunConfig } = useContext(AuthContext);
-
-
-
-    
+    const [showWelcomeModal, setShowWelcomeModal] = useState(true);
 
     const handleUpdatePassword = async () => {
         // Reauthenticate before updating the password
@@ -55,7 +51,7 @@ const Profile = () => {
             const response = await axios.post(
                 `${process.env.REACT_APP_BACKEND_URL}/profile`,
                 {
-                    uid,
+                    uid: user.uid,
                     mailgunApiKey,
                     mailgunDomain,
                 }
@@ -68,6 +64,14 @@ const Profile = () => {
             console.error(error);
         }
     };
+
+    useEffect(() => {
+        setShowWelcomeModal(false);
+        if (user && !user.hasMailgunConfig) {
+            // Logic to open the modal
+            // Assuming you have a state to control the modal visibility
+        }
+    }, [user]); // Dependency array includes `user` to run the effect when the user object changes
 
     return (
         <Box
@@ -145,8 +149,8 @@ const Profile = () => {
                 </Box>
             </Collapse>
             <WelcomeModal
-                open={!hasMailgunConfig}
-                onClose={() => setHasMailgunConfig(true)}
+                open={showWelcomeModal}
+                onClose={() => setShowWelcomeModal(true)}
             />
         </Box>
     );

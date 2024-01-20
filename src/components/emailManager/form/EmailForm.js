@@ -55,7 +55,7 @@ const EmailForm = ({
 }) => {
     const { dataList, isSending, handleSendCsvEmails, selectedRow } =
         useContext(ManagerContext);
-    const { uid } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     const {
         register,
@@ -136,7 +136,7 @@ const EmailForm = ({
         };
 
         const data = {
-            uid: uid,
+            uid: user.uid,
             emailTemplates: emailTemplate,
         };
 
@@ -215,7 +215,7 @@ const EmailForm = ({
                             color="primary"
                             onClick={() => {
                                 const data = {
-                                    uid: uid,
+                                    uid: user.uid,
                                     emailTemplates: dataList.map((item) => ({
                                         to_name: item.first_name,
                                         to_email: item.email,

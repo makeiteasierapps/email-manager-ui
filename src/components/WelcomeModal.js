@@ -12,7 +12,6 @@ import {
 const MailgunConfigModal = ({ open, onClose }) => {
     const { user } = useContext(AuthContext);
 
-    console.log(user);
     const handleUseTrial = () => {
         // Set the API key and domain to admin account
         // You will need to implement the logic to set these values
