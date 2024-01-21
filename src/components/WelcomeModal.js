@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+
+import { ManagerContext } from './emailManager/ManagerContext';
 import {
     Dialog,
     DialogTitle,
@@ -9,51 +9,27 @@ import {
     Button,
 } from '@mui/material';
 
-const MailgunConfigModal = ({ open, onClose }) => {
-    const { user, setUser } = useContext(AuthContext);
-
-    const handleUseTrial = async () => {
-        try {
-            const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/start-trial`,
-                {
-                    uid: user.uid,
-                    onTrial: true,
-                }
-            );
-            const { mailgunApiKey, mailgunDomain } = response.data;
-
-            const updatedUser = {
-                ...user,
-                onTrial: true,
-                mailgunApiKey,
-                mailgunDomain,
-            };
-
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            onClose();
-            console.log(user);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleProvideOwn = () => {
-        // Redirect to profile page or open a form to enter API key and domain
-
-        onClose();
-    };
+const MailgunConfigModal = ({ open, setShowWelcomeModal }) => {
+    const { handleUseTrial, setValue } = useContext(ManagerContext);
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={() => setShowWelcomeModal(false)}>
             <DialogTitle>Mailgun Configuration</DialogTitle>
-            <DialogContent>
-                {/* Content explaining the options */}
-            </DialogContent>
+            <DialogContent>You know what to do</DialogContent>
             <DialogActions>
-                <Button onClick={handleUseTrial}>Start Trial</Button>
-                <Button onClick={handleProvideOwn}>Provide My Own</Button>
+                <Button
+                    onClick={() => {
+                        handleUseTrial();
+                        setShowWelcomeModal(false);
+                        setValue('emailManager');
+                        localStorage.setItem('location', 'emailManager');
+                    }}
+                >
+                    Start Trial
+                </Button>
+                <Button onClick={() => setShowWelcomeModal(false)}>
+                    Provide My Own
+                </Button>
             </DialogActions>
         </Dialog>
     );

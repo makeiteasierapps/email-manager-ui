@@ -1,24 +1,29 @@
-import { useState } from 'react';
-import { Toolbar, IconButton, AppBar, Box } from '@mui/material';
+import { useContext } from 'react';
+import { Toolbar, IconButton, AppBar, Box, Button } from '@mui/material';
 import MailIcon from '@mui/icons-material/Mail';
 import InfoIcon from '@mui/icons-material/Info';
 import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { signOut } from 'firebase/auth';
-import { auth } from '../context/AuthContext';
+import { AuthContext, auth } from '../context/AuthContext';
+import { ManagerContext } from '../components/emailManager/ManagerContext';
 import EmailManager from '../components//emailManager/EmailManager';
 import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
 import Profile from '../pages/Profile';
 
-import { ManagerProvider } from '../components/emailManager/ManagerContext';
-
 const Home = () => {
-    const [value, setValue] = useState(0);
+    const { user } = useContext(AuthContext);
+    const { handleUseTrial, value, setValue } = useContext(ManagerContext);
+
+    const handleSetValue = (newValue) => {
+        setValue(newValue);
+        localStorage.setItem('location', newValue);
+    };
 
     const handleLogout = async () => {
         try {
             await signOut(auth);
-            console.log('Logged out');
+            localStorage.removeItem('location');
         } catch (error) {
             console.error('Error logging out', error);
         }
@@ -33,7 +38,7 @@ const Home = () => {
                             edge="start"
                             color="inherit"
                             aria-label="send"
-                            onClick={() => setValue(0)}
+                            onClick={() => handleSetValue('home')}
                         >
                             <PersonIcon />
                         </IconButton>
@@ -41,7 +46,7 @@ const Home = () => {
                             edge="start"
                             color="inherit"
                             aria-label="send"
-                            onClick={() => setValue(1)}
+                            onClick={() => handleSetValue('emailManager')}
                         >
                             <MailIcon />
                         </IconButton>
@@ -49,12 +54,23 @@ const Home = () => {
                             edge="start"
                             color="inherit"
                             aria-label="info"
-                            onClick={() => setValue(2)}
+                            onClick={() => handleSetValue('dataDash')}
                         >
                             <InfoIcon />
                         </IconButton>
                     </Box>
-
+                    {user && !user.onTrial && !user.hasMailgunConfig ? (
+                        <Box>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                component="div"
+                                onClick={handleUseTrial}
+                            >
+                                Start Trial
+                            </Button>
+                        </Box>
+                    ) : null}
                     <IconButton
                         color="inherit"
                         aria-label="logout"
@@ -71,14 +87,9 @@ const Home = () => {
                     alignItems: 'center',
                 }}
             >
-                {value === 0 && <Profile />}
-                {value === 1 && (
-                    <ManagerProvider>
-                        <EmailManager />
-                    </ManagerProvider>
-                )}
-                {value === 2 && <EmailCRMInfoPanel />}
-
+                {value === 'home' && <Profile />}
+                {value === 'emailManager' && <EmailManager />}
+                {value === 'dataDash' && <EmailCRMInfoPanel />}
             </Box>
         </Box>
     );

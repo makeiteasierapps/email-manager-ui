@@ -1,14 +1,20 @@
-import { useContext, useRef, useEffect } from 'react';
+import { useContext, useRef, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
-import { Button, TextField, Switch, FormControlLabel } from '@mui/material';
-import TemplateCarousel from '../TemplateCarousel';
+import {
+    Button,
+    TextField,
+    Switch,
+    FormControlLabel,
+    Box,
+} from '@mui/material';
+import TemplateCarousel, { createEmailTemplate } from '../TemplateCarousel';
 import { ManagerContext } from '../ManagerContext';
 import { AuthContext } from '../../../context/AuthContext';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { createEmailTemplate } from '../TemplateCarousel';
+import { RiseLoader } from 'react-spinners';
 import _ from 'lodash';
 
 const StyledField = styled(TextField)(({ theme }) => ({
@@ -53,8 +59,14 @@ const EmailForm = ({
     setSelectedTemplate,
     isBulk,
 }) => {
-    const { dataList, isSending, handleSendCsvEmails, selectedRow } =
-        useContext(ManagerContext);
+    const {
+        dataList,
+        isSending,
+        setIsSending,
+        handleSendCsvEmails,
+        selectedRow,
+    } = useContext(ManagerContext);
+
     const { user } = useContext(AuthContext);
 
     const {
@@ -119,6 +131,7 @@ const EmailForm = ({
     ]);
 
     const onSubmit = async (values) => {
+        setIsSending(true);
         const emailTemplate = {
             from_email: 'test@mg.shauno.co',
             from_name: values.from_name,
@@ -154,6 +167,7 @@ const EmailForm = ({
                 alert(`Email sent successfully`);
                 reset();
             }
+            setIsSending(false);
         } catch (error) {
             alert(error.response.data);
         }
@@ -199,8 +213,21 @@ const EmailForm = ({
                         variant="contained"
                         fullWidth
                         type="submit"
+                        style={{ minHeight: '56px' }}
+                        disabled={isSending}
                     >
-                        Submit
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            height="100%"
+                        >
+                            {isSending ? (
+                                <RiseLoader color="white" />
+                            ) : (
+                                'Submit'
+                            )}
+                        </Box>
                     </Button>
                 ) : (
                     isFormValid &&

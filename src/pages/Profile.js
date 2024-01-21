@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
-import HashLoader from 'react-spinners/HashLoader';
+import { PuffLoader } from 'react-spinners/';
 import axios from 'axios';
 import { AuthContext, auth } from '../context/AuthContext';
 import {
@@ -98,11 +98,10 @@ const Profile = () => {
                 <Backdrop
                     open={true}
                     style={{
-                        color: '#fff',
                         zIndex: (theme) => theme.zIndex.drawer + 1,
                     }}
                 >
-                    <HashLoader color="inherit" />
+                    <PuffLoader color="black" size={100} />
                 </Backdrop>
             ) : (
                 // Once user is populated, render the profile information
@@ -113,7 +112,7 @@ const Profile = () => {
                         gap
                         alignItems="center"
                     >
-                        <Avatar src={user.photoURL || '/default-avatar.png'} />
+                        <Avatar src={user.photoURL} />
                         <Typography variant="h5">
                             {user.displayName || 'Guest'}
                         </Typography>
@@ -180,7 +179,7 @@ const Profile = () => {
             </Collapse>
             <WelcomeModal
                 open={showWelcomeModal}
-                onClose={() => setShowWelcomeModal(false)}
+                setShowWelcomeModal={setShowWelcomeModal}
             />
         </Box>
     );

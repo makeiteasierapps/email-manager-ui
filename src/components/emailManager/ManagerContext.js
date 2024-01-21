@@ -1,5 +1,6 @@
-import { useState, createContext } from 'react';
+import { useState, createContext, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { AuthContext } from '../../context/AuthContext';
 
 export const ManagerContext = createContext();
 
@@ -9,6 +10,42 @@ export const ManagerProvider = ({ children }) => {
     const [isSending, setIsSending] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [value, setValue] = useState('home');
+
+    const { user, setUser } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (localStorage.getItem('location')) {
+            setValue(localStorage.getItem('location'));
+        } else {
+            setValue('home');
+        }
+    }, []);
+
+    const handleUseTrial = async () => {
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/start-trial`,
+                {
+                    uid: user.uid,
+                    onTrial: true,
+                }
+            );
+            const { mailgunApiKey, mailgunDomain } = response.data;
+
+            const updatedUser = {
+                ...user,
+                onTrial: true,
+                mailgunApiKey,
+                mailgunDomain,
+            };
+
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     // Handles extracting data from the CSV file
     const handleUpload = async () => {
@@ -75,8 +112,12 @@ export const ManagerProvider = ({ children }) => {
                 selectedFile,
                 setSelectedFile,
                 isSending,
+                setIsSending,
                 selectedRow,
                 setSelectedRow,
+                handleUseTrial,
+                value,
+                setValue,
             }}
         >
             {children}
