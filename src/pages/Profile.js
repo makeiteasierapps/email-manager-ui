@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
+import HashLoader from 'react-spinners/HashLoader';
 import axios from 'axios';
 import { AuthContext, auth } from '../context/AuthContext';
 import {
@@ -9,6 +10,7 @@ import {
     Avatar,
     IconButton,
     Collapse,
+    Backdrop,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -92,14 +94,32 @@ const Profile = () => {
             gap={2}
             alignItems={'center'}
         >
-            <Box display="flex" flexDirection="row" gap alignItems="center">
-                {user && (
-                    <>
-                        <Avatar src={user.photoURL} />
-                        <Typography variant="h5">{user.displayName}</Typography>
-                    </>
-                )}
-            </Box>
+            {user === null ? (
+                <Backdrop
+                    open={true}
+                    style={{
+                        color: '#fff',
+                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                    }}
+                >
+                    <HashLoader color="inherit" />
+                </Backdrop>
+            ) : (
+                // Once user is populated, render the profile information
+                <>
+                    <Box
+                        display="flex"
+                        flexDirection="row"
+                        gap
+                        alignItems="center"
+                    >
+                        <Avatar src={user.photoURL || '/default-avatar.png'} />
+                        <Typography variant="h5">
+                            {user.displayName || 'Guest'}
+                        </Typography>
+                    </Box>
+                </>
+            )}
 
             <Box display="flex" flexDirection="column" gap>
                 <TextField
