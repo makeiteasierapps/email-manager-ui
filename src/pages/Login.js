@@ -37,7 +37,7 @@ const Login = () => {
                     onClick={() => {
                         signInWithGithub(setUser);
                     }}
-                    elevation={4}
+                    elevation={9}
                     sx={{
                         mt: 2,
                         display: 'flex',

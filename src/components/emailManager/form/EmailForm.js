@@ -2,7 +2,7 @@ import { useContext, useRef, useEffect } from 'react';
 import { styled } from '@mui/system';
 import { Button, TextField, Box } from '@mui/material';
 import TemplateCarousel, { createEmailTemplate } from '../TemplateCarousel';
-import { ManagerContext } from '../ManagerContext';
+import { ManagerContext } from '../../../context/ManagerContext';
 import { AuthContext } from '../../../context/AuthContext';
 import axios from 'axios';
 import { RiseLoader } from 'react-spinners';

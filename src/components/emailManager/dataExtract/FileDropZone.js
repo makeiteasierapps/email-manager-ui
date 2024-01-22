@@ -4,7 +4,7 @@ import { Description, Delete } from '@mui/icons-material';
 import { useDropzone } from 'react-dropzone';
 import { useCallback } from 'react';
 import { Box, Typography, IconButton, useTheme } from '@mui/material';
-import { ManagerContext } from '../ManagerContext';
+import { ManagerContext } from '../../../context/ManagerContext';
 
 const FileDropZone = () => {
     const theme = useTheme();

@@ -51,7 +51,6 @@ const EmailManager = () => {
             <FormContainer>
                 {isBulk ? (
                     <>
-                        {' '}
                         <Box
                             display={'flex'}
                             flexDirection={'column'}

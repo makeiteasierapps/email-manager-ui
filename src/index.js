@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './context/AuthContext';
-import { ManagerProvider } from './components/emailManager/ManagerContext';
+import { ManagerProvider } from './context/ManagerContext';
 import MyThemeProvider from './Theme';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

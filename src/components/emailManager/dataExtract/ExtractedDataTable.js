@@ -12,7 +12,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { ManagerContext } from '../ManagerContext';
+import { ManagerContext } from '../../../context/ManagerContext';
 
 const ExtractedDataTable = () => {
     const theme = useTheme();

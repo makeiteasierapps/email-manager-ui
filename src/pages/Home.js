@@ -12,8 +12,8 @@ import { Person, ExitToApp, Info, Mail } from '@mui/icons-material';
 
 import { signOut } from 'firebase/auth';
 import { AuthContext, auth } from '../context/AuthContext';
-import { ManagerContext } from '../components/emailManager/ManagerContext';
-import EmailManager from '../components//emailManager/EmailManager';
+import { ManagerContext } from '../context/ManagerContext';
+import EmailManager from '../components/emailManager/EmailManager';
 import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
 import Profile from '../pages/Profile';
 

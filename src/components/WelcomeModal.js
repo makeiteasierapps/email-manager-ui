@@ -15,7 +15,7 @@ import {
     Link,
 } from '@mui/material';
 
-import { ManagerContext } from './emailManager/ManagerContext';
+import { ManagerContext } from '../context/ManagerContext';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import {
     Mail,

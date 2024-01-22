@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from 'react';
 import { PuffLoader } from 'react-spinners/';
 import axios from 'axios';
-import { AuthContext, auth } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import {
     Box,
     Button,
@@ -84,7 +84,10 @@ const Profile = () => {
                         gap={3}
                         alignItems="center"
                     >
-                        <Avatar src={user.photoURL} sx={{ width: 77, height: 77 }} />
+                        <Avatar
+                            src={user.photoURL}
+                            sx={{ width: 77, height: 77 }}
+                        />
                         <Typography color={'white'} variant="h5">
                             {user.displayName || 'Guest'}
                         </Typography>
