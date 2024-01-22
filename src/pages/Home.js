@@ -30,6 +30,7 @@ const Home = () => {
         hideSnackbar,
     } = useContext(ManagerContext);
     const theme = useTheme();
+    document.body.style.backgroundColor = theme.palette.background.main;
 
     const handleSetValue = (newValue) => {
         setValue(newValue);
@@ -107,13 +108,7 @@ const Home = () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
+            <Box display="flex" flexDirection="column" alignItems="center">
                 {value === 'home' && <Profile />}
                 {value === 'emailManager' && <EmailManager />}
                 {value === 'dataDash' && <EmailCRMInfoPanel />}
