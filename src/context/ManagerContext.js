@@ -12,6 +12,23 @@ export const ManagerProvider = ({ children }) => {
     const [selectedRow, setSelectedRow] = useState(null);
     const [value, setValue] = useState('home');
 
+    // Snackbar state
+    const [snackbarInfo, setSnackbarInfo] = useState({
+        open: false,
+        message: '',
+        severity: 'info',
+    });
+
+    // Function to show snackbar
+    const showSnackbar = (message, severity) => {
+        setSnackbarInfo({ open: true, message, severity });
+    };
+
+    // Function to hide snackbar
+    const hideSnackbar = () => {
+        setSnackbarInfo({ ...snackbarInfo, open: false });
+    };
+
     const { user, setUser } = useContext(AuthContext);
 
     useEffect(() => {
@@ -50,7 +67,7 @@ export const ManagerProvider = ({ children }) => {
     // Handles extracting data from the CSV file
     const handleUpload = async () => {
         if (!file) {
-            alert('Please select a file first');
+            showSnackbar('Please select a file first', 'warning');
             return;
         }
 
@@ -70,9 +87,17 @@ export const ManagerProvider = ({ children }) => {
             if (response.status === 200) {
                 setDataList(response.data.results);
                 setSelectedRow({ index: 0, ...response.data.results[0] });
+                showSnackbar('File processed successfully', 'success');
             }
         } catch (error) {
             console.error(error);
+            let errorMessage = 'Failed to process file';
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            showSnackbar(errorMessage, 'error');
         }
     };
 
@@ -90,7 +115,7 @@ export const ManagerProvider = ({ children }) => {
                 }
             );
             if (response.status === 200) {
-                alert('Emails sent successfully');
+                showSnackbar('Emails sent successfully', 'success');
                 setIsSending(false);
                 setDataList([]);
                 setSelectedFile(null);
@@ -98,7 +123,13 @@ export const ManagerProvider = ({ children }) => {
             }
         } catch (error) {
             console.error(error);
-            alert(error.response.data);
+            let errorMessage = 'An error occurred';
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            showSnackbar(errorMessage, 'error');
         }
     };
 
@@ -118,6 +149,9 @@ export const ManagerProvider = ({ children }) => {
                 handleUseTrial,
                 value,
                 setValue,
+                snackbarInfo,
+                showSnackbar,
+                hideSnackbar,
             }}
         >
             {children}

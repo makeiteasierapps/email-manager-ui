@@ -1,7 +1,8 @@
-import { useContext, useRef, useEffect } from 'react';
+import { useContext, useRef, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import { Button, TextField, Box } from '@mui/material';
 import TemplateCarousel, { createEmailTemplate } from '../TemplateCarousel';
+import MySnackBar from '../../SnackBar';
 import { ManagerContext } from '../../../context/ManagerContext';
 import { AuthContext } from '../../../context/AuthContext';
 import axios from 'axios';
@@ -35,9 +36,10 @@ const EmailForm = ({
         setIsSending,
         handleSendCsvEmails,
         selectedRow,
+        snackbarInfo,
+        showSnackbar,
+        hideSnackbar,
     } = useContext(ManagerContext);
-    console.log(emailForm);
-
     const { user } = useContext(AuthContext);
     const prevFormValuesRef = useRef();
 
@@ -47,9 +49,6 @@ const EmailForm = ({
             ? selectedTemplate
             : emailForm.subject && emailForm.message);
 
-    // This useEffect hook is used to store the current form values in a ref object.
-    // This is done so that the previous form values can be accessed in the next render cycle.
-    // The hook will run every time the formValues state changes.
     useEffect(() => {
         prevFormValuesRef.current = emailForm.formValues;
     }, [emailForm.formValues]);
@@ -126,12 +125,21 @@ const EmailForm = ({
                 }
             );
             if (response.status === 200) {
-                alert(`Email sent successfully`);
+                showSnackbar('Email sent successfully', 'success');
                 emailForm.reset();
             }
             setIsSending(false);
         } catch (error) {
-            alert(error.response.data);
+            let errorMessage = 'An error occurred';
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            showSnackbar(errorMessage, 'error');
+            setTimeout(() => {
+                setIsSending(false);
+            }, 6000);
         }
     };
 
@@ -226,6 +234,12 @@ const EmailForm = ({
                     )
                 )}
             </form>
+            <MySnackBar
+                open={snackbarInfo.open}
+                message={snackbarInfo.message}
+                severity={snackbarInfo.severity}
+                handleClose={hideSnackbar}
+            />
         </Box>
     );
 };

@@ -17,13 +17,17 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
+import { ManagerContext } from '../../context/ManagerContext';
 import { ExpandMore } from '@mui/icons-material';
 import { PuffLoader } from 'react-spinners/';
+import MySnackBar from '../SnackBar';
 
 const EmailCRMInfoPanel = () => {
     const [data, setData] = useState([]);
     const [expandedRow, setExpandedRow] = useState(null);
     const [loading, setLoading] = useState(false);
+    const { showSnackbar, snackbarInfo, hideSnackbar } =
+        useContext(ManagerContext);
     const { user } = useContext(AuthContext);
     const theme = useTheme();
 
@@ -40,11 +44,19 @@ const EmailCRMInfoPanel = () => {
                     setLoading(false);
                 } catch (error) {
                     console.error(error);
+                    let errorMessage = 'Failed to fetch email data';
+                    if (error.response && error.response.data) {
+                        errorMessage = error.response.data;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    showSnackbar(errorMessage, 'error');
                 }
+                setLoading(false);
             }
         };
         handleFetch();
-    }, [user]);
+    }, [showSnackbar, user]);
 
     return (
         <Box
@@ -248,6 +260,12 @@ const EmailCRMInfoPanel = () => {
                     )}
                 </Table>
             </TableContainer>
+            <MySnackBar
+                open={snackbarInfo.open}
+                message={snackbarInfo.message}
+                severity={snackbarInfo.severity}
+                handleClose={hideSnackbar}
+            />
         </Box>
     );
 };

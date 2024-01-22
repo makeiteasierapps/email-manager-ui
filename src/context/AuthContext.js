@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
     const [idToken, setIdToken] = useState(null);
     const [user, setUser] = useState(null);
 
-    const signInWithGithub = async () => {
+    const signInWithGithub = async (showSnackbar) => {
         try {
             const result = await signInWithPopup(auth, provider);
             const additionalUserInfo = getAdditionalUserInfo(result);
@@ -50,9 +50,14 @@ const AuthProvider = ({ children }) => {
                     setUser(userData);
                     localStorage.setItem('user', JSON.stringify(userData));
                 } catch (error) {
-                    console.error(
-                        `There has been a problem with your fetch operation ${error}`
-                    );
+                    console.error(error);
+                    let errorMessage = 'Failed to create user profile';
+                    if (error.response && error.response.data) {
+                        errorMessage = error.response.data;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    showSnackbar(errorMessage, 'error');
                 }
             } else {
                 try {
@@ -71,16 +76,25 @@ const AuthProvider = ({ children }) => {
                         ...response.data,
                     });
                 } catch (error) {
-                    console.error(
-                        `There has been a problem with your fetch operation: ${error}`
-                    );
+                    console.error(error);
+                    let errorMessage = 'Failed to retrieve user profile';
+                    if (error.response && error.response.data) {
+                        errorMessage = error.response.data;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    showSnackbar(errorMessage, 'error');
                 }
             }
         } catch (error) {
-            console.error(
-                'There has been a problem with your login operation:',
-                error
-            );
+            console.error(error);
+            let errorMessage = 'Login failed';
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            showSnackbar(errorMessage, 'error');
         }
     };
 
@@ -93,10 +107,8 @@ const AuthProvider = ({ children }) => {
                 );
                 return response.data;
             } catch (error) {
-                console.error(
-                    'There has been a problem with your fetch operation:',
-                    error
-                );
+                console.error(error);
+                alert('Failed to fetch user data. Please try again later.');
                 return null;
             }
         };

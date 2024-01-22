@@ -2,9 +2,14 @@ import { useContext } from 'react';
 import { Paper, Box, Typography, Container, useTheme } from '@mui/material';
 import { GitHub } from '@mui/icons-material';
 import { AuthContext } from '../context/AuthContext';
+import { ManagerContext } from '../context/ManagerContext';
+
+import MySnackBar from '../components/SnackBar';
 
 const Login = () => {
-    const { setUser, signInWithGithub } = useContext(AuthContext);
+    const { signInWithGithub } = useContext(AuthContext);
+    const { showSnackbar, snackbarInfo, hideSnackbar } =
+        useContext(ManagerContext);
     const theme = useTheme();
 
     return (
@@ -35,7 +40,7 @@ const Login = () => {
 
                 <Paper
                     onClick={() => {
-                        signInWithGithub(setUser);
+                        signInWithGithub(showSnackbar);
                     }}
                     elevation={9}
                     sx={{
@@ -67,6 +72,12 @@ const Login = () => {
                     </Typography>
                 </Paper>
             </Box>
+            <MySnackBar
+                open={snackbarInfo.open}
+                message={snackbarInfo.message}
+                severity={snackbarInfo.severity}
+                handleClose={hideSnackbar}
+            />
         </Container>
     );
 };

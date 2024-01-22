@@ -15,11 +15,20 @@ import { AuthContext, auth } from '../context/AuthContext';
 import { ManagerContext } from '../context/ManagerContext';
 import EmailManager from '../components/emailManager/EmailManager';
 import EmailCRMInfoPanel from '../components/datadash/EmailCRMInfoPanel';
+import MySnackBar from '../components/SnackBar';
 import Profile from '../pages/Profile';
 
 const Home = () => {
     const { user } = useContext(AuthContext);
-    const { handleUseTrial, value, setValue } = useContext(ManagerContext);
+
+    const {
+        handleUseTrial,
+        value,
+        setValue,
+        showSnackbar,
+        snackbarInfo,
+        hideSnackbar,
+    } = useContext(ManagerContext);
     const theme = useTheme();
 
     const handleSetValue = (newValue) => {
@@ -32,7 +41,14 @@ const Home = () => {
             await signOut(auth);
             localStorage.removeItem('location');
         } catch (error) {
-            console.error('Error logging out', error);
+            console.error(error);
+            let errorMessage = 'Failed to log out';
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            showSnackbar(errorMessage, 'error');
         }
     };
 
@@ -102,6 +118,12 @@ const Home = () => {
                 {value === 'emailManager' && <EmailManager />}
                 {value === 'dataDash' && <EmailCRMInfoPanel />}
             </Box>
+            <MySnackBar
+                open={snackbarInfo.open}
+                message={snackbarInfo.message}
+                severity={snackbarInfo.severity}
+                handleClose={hideSnackbar}
+            />
         </Box>
     );
 };

@@ -2,6 +2,8 @@ import { useContext, useState, useEffect } from 'react';
 import { PuffLoader } from 'react-spinners/';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { ManagerContext } from '../context/ManagerContext';
+import MySnackBar from '../components/SnackBar';
 import {
     Box,
     Button,
@@ -14,6 +16,8 @@ import {
 import WelcomeModal from '../components/WelcomeModal';
 
 const Profile = () => {
+    const { showSnackbar, hideSnackbar, snackbarInfo } =
+        useContext(ManagerContext);
     const { user, setUser } = useContext(AuthContext);
     const [mailgunApiKey, setMailgunApiKey] = useState('');
     const [mailgunDomain, setMailgunDomain] = useState('');
@@ -41,11 +45,18 @@ const Profile = () => {
             // Update local storage with new user details
             localStorage.setItem('user', JSON.stringify(updatedUser));
 
-            alert('Profile updated successfully!');
+            showSnackbar('Profile updated successfully!', 'success');
             setMailgunApiKey('');
             setMailgunDomain('');
         } catch (error) {
             console.error(error);
+            let errorMessage = 'Failed to update profile';
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            showSnackbar(errorMessage, 'error');
         }
     };
 
@@ -120,6 +131,12 @@ const Profile = () => {
             <WelcomeModal
                 open={showWelcomeModal}
                 setShowWelcomeModal={setShowWelcomeModal}
+            />
+            <MySnackBar
+                open={snackbarInfo.open}
+                message={snackbarInfo.message}
+                severity={snackbarInfo.severity}
+                handleClose={hideSnackbar}
             />
         </Box>
     );

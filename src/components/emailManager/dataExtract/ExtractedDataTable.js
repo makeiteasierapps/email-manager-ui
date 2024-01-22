@@ -13,10 +13,11 @@ import {
 } from '@mui/material';
 
 import { ManagerContext } from '../../../context/ManagerContext';
+import MySnackBar from '../../SnackBar';
 
 const ExtractedDataTable = () => {
     const theme = useTheme();
-    const { dataList, handleUpload, selectedRow, setSelectedRow } =
+    const { dataList, handleUpload, selectedRow, setSelectedRow, snackbarInfo, hideSnackbar } =
         useContext(ManagerContext);
 
     return (
@@ -105,6 +106,12 @@ const ExtractedDataTable = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <MySnackBar
+                    open={snackbarInfo.open}
+                    message={snackbarInfo.message}
+                    severity={snackbarInfo.severity}
+                    handleClose={hideSnackbar}
+                />
             </Box>
         </>
     );

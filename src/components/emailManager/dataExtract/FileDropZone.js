@@ -5,11 +5,18 @@ import { useDropzone } from 'react-dropzone';
 import { useCallback } from 'react';
 import { Box, Typography, IconButton, useTheme } from '@mui/material';
 import { ManagerContext } from '../../../context/ManagerContext';
+import MySnackBar from '../../SnackBar';
 
 const FileDropZone = () => {
     const theme = useTheme();
-    const { setFile, selectedFile, setSelectedFile } =
-        useContext(ManagerContext);
+    const {
+        setFile,
+        selectedFile,
+        setSelectedFile,
+        snackbarInfo,
+        showSnackbar,
+        hideSnackbar,
+    } = useContext(ManagerContext);
 
     const handleFileChange = useCallback(
         (selectedFile) => {
@@ -27,13 +34,13 @@ const FileDropZone = () => {
     const onDrop = useCallback(
         (acceptedFiles) => {
             if (acceptedFiles[0].type !== 'text/csv') {
-                alert('Please upload a .csv file');
+                showSnackbar('Please upload a .csv file', 'warning');
                 return;
             }
             setSelectedFile(acceptedFiles[0]);
             handleFileChange(acceptedFiles[0]);
         },
-        [handleFileChange, setSelectedFile]
+        [handleFileChange, setSelectedFile, showSnackbar]
     );
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -72,6 +79,12 @@ const FileDropZone = () => {
                     </IconButton>
                 </Box>
             )}
+            <MySnackBar
+                open={snackbarInfo.open}
+                message={snackbarInfo.message}
+                severity={snackbarInfo.severity}
+                handleClose={hideSnackbar}
+            />
         </Box>
     );
 };
