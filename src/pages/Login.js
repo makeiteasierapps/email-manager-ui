@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-
 import {
     Avatar,
     Button,
@@ -8,13 +7,11 @@ import {
     Box,
     Typography,
     Container,
+    useTheme,
 } from '@mui/material';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-
+import { GitHub, LockOutlined } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-
 import { auth, AuthContext } from '../context/AuthContext';
 
 const validationSchema = yup.object({
@@ -30,6 +27,7 @@ const validationSchema = yup.object({
 
 const Login = () => {
     const { setUser, signInWithGithub } = useContext(AuthContext);
+    const theme = useTheme();
 
     const handleLogin = async (email, password) => {
         try {
@@ -58,17 +56,26 @@ const Login = () => {
     });
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container
+            component="main"
+            maxWidth="xs"
+            
+            sx={{
+                backgroundColor: theme.palette.background.main,
+                width: '100vw',
+                height: '100vh',
+            }}
+        >
             <Box
                 sx={{
-                    marginTop: 8,
+                    
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}
             >
                 <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
+                    <LockOutlined />
                 </Avatar>
                 <Typography component="h1" variant="h5">
                     Email Manager
@@ -123,7 +130,7 @@ const Login = () => {
                     <Button
                         fullWidth
                         variant="contained"
-                        startIcon={<GitHubIcon />}
+                        startIcon={<GitHub />}
                         onClick={() => {
                             signInWithGithub(setUser);
                         }}

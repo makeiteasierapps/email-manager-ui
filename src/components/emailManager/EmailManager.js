@@ -1,14 +1,18 @@
 import { useState } from 'react';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Switch, FormControlLabel, useTheme } from '@mui/material';
 import { styled } from '@mui/system';
 import EmailForm from './form/EmailForm';
-import CsvComponent from './dataExtract/ExtractedDataTable';
+import ExtractedDataTable from './dataExtract/ExtractedDataTable';
+import FileDropZone from './dataExtract/FileDropZone';
+import { useEmailForm } from './form/useEmailForm';
 
 const FormContainer = styled(Box)({
     width: '70%',
 });
 
 const EmailManager = () => {
+    const emailForm = useEmailForm();
+    const theme = useTheme();
     const [isBulk, setIsBulk] = useState(false);
     const [templates, setTemplates] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -18,7 +22,6 @@ const EmailManager = () => {
             display={'flex'}
             flexDirection={'column'}
             width={'100%'}
-            height={'100vh'}
             alignItems={'center'}
         >
             <Box
@@ -46,9 +49,40 @@ const EmailManager = () => {
             </Box>
 
             <FormContainer>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            {...emailForm.register('useTemplate')}
+                            sx={{
+                                '& .MuiSwitch-switchBase': {
+                                    color: theme.palette.primary.main,
+                                },
+                                '& .MuiSwitch-track': {
+                                    backgroundColor: theme.palette.primary.main,
+                                },
+                                '& .MuiSwitch-switchBase.Mui-checked': {
+                                    color: theme.palette.text.secondary,
+                                },
+                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
+                                    {
+                                        backgroundColor:
+                                            theme.palette.text.secondary, // This changes the track color when the switch is checked
+                                    },
+                            }}
+                        />
+                    }
+                    label="Use Template"
+                    sx={{ color: 'white' }}
+                />
                 {isBulk ? (
-                    <>
-                        <CsvComponent
+                    <Box
+                        display={'flex'}
+                        flexDirection={'column'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                    >
+                        <FileDropZone />
+                        <ExtractedDataTable
                             templates={templates}
                             setSelectedTemplate={setSelectedTemplate}
                         />
@@ -58,8 +92,9 @@ const EmailManager = () => {
                             setTemplates={setTemplates}
                             selectedTemplate={selectedTemplate}
                             setSelectedTemplate={setSelectedTemplate}
+                            emailForm={emailForm}
                         />
-                    </>
+                    </Box>
                 ) : (
                     <EmailForm
                         isBulk={isBulk}
@@ -67,6 +102,7 @@ const EmailManager = () => {
                         setTemplates={setTemplates}
                         selectedTemplate={selectedTemplate}
                         setSelectedTemplate={setSelectedTemplate}
+                        emailForm={emailForm}
                     />
                 )}
             </FormContainer>

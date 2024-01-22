@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import DescriptionIcon from '@mui/icons-material/Description';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Description, Delete } from '@mui/icons-material';
+
 import { useDropzone } from 'react-dropzone';
 import { useCallback } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
@@ -42,10 +42,12 @@ const FileDropZone = () => {
     return (
         <Box
             {...getRootProps()}
+            display={'flex'}
             sx={{
-                border: '1px dashed gray',
+                width: '30vw',
                 p: 2,
                 m: 2,
+                borderRadius: 1,
                 textAlign: 'center',
                 backgroundColor: isDragActive ? 'lightgray' : 'white',
             }}
@@ -60,12 +62,10 @@ const FileDropZone = () => {
 
             {selectedFile && (
                 <Box>
-                    <DescriptionIcon
-                        sx={{ fontSize: 50, color: 'primary.main' }}
-                    />
+                    <Description sx={{ fontSize: 50, color: 'primary.main' }} />
                     <Typography variant="body2">{selectedFile.name}</Typography>
                     <IconButton onClick={handleDelete}>
-                        <DeleteIcon />
+                        <Delete />
                     </IconButton>
                 </Box>
             )}

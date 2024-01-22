@@ -10,7 +10,7 @@ import {
     Paper,
     Box,
 } from '@mui/material';
-import FileDropZone from './FileDropZone';
+
 import { ManagerContext } from '../ManagerContext';
 
 const ExtractedDataTable = () => {
@@ -19,8 +19,7 @@ const ExtractedDataTable = () => {
 
     return (
         <>
-            <FileDropZone />
-            <Box display={'flex'} justifyContent={'center'} margin={4} gap>
+            <Box display={'flex'} justifyContent={'center'} gap>
                 <Button
                     variant="contained"
                     color="primary"
@@ -29,7 +28,7 @@ const ExtractedDataTable = () => {
                     Extract Data
                 </Button>
             </Box>
-            <Box display={'flex'} justifyContent={'center'} margin={4} gap={2}>
+            <Box display={'flex'} justifyContent={'center'} margin={4} gap={2} width={'100%'}>
                 <TableContainer component={Paper} style={{ maxHeight: 440 }}>
                     <Table aria-label="simple table">
                         <TableHead>

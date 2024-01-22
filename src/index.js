@@ -5,15 +5,18 @@ import App from './App';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './context/AuthContext';
 import { ManagerProvider } from './components/emailManager/ManagerContext';
+import MyThemeProvider from './Theme';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <CssBaseline />
-        <AuthProvider>
-            <ManagerProvider>
-                <App />
-            </ManagerProvider>
-        </AuthProvider>
+        <MyThemeProvider>
+            <AuthProvider>
+                <ManagerProvider>
+                    <App />
+                </ManagerProvider>
+            </AuthProvider>
+        </MyThemeProvider>
     </React.StrictMode>
 );

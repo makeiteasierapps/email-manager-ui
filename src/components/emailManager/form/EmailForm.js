@@ -1,19 +1,10 @@
 import { useContext, useRef, useEffect } from 'react';
 import { styled } from '@mui/system';
-import {
-    Button,
-    TextField,
-    Switch,
-    FormControlLabel,
-    Box,
-} from '@mui/material';
+import { Button, TextField, Box } from '@mui/material';
 import TemplateCarousel, { createEmailTemplate } from '../TemplateCarousel';
 import { ManagerContext } from '../ManagerContext';
 import { AuthContext } from '../../../context/AuthContext';
 import axios from 'axios';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { RiseLoader } from 'react-spinners';
 import _ from 'lodash';
 
@@ -30,34 +21,13 @@ const formFields = [
     { id: 'message', label: 'Message', multiline: true, rows: 4 },
 ];
 
-const validationSchema = yup.object({
-    from_name: yup.string().required('Sender Name is required'),
-    to_email: yup
-        .string()
-        .email('Enter a valid email')
-        .required('Email is required'),
-    to_name: yup.string().required('Recipient Name is required'),
-    to_company: yup.string().required('Recipient Company is required'),
-    subject: yup
-        .string()
-        .test('useTemplate', 'Subject is required', function (value) {
-            const { useTemplate } = this.parent;
-            return useTemplate ? true : !!value;
-        }),
-    message: yup
-        .string()
-        .test('useTemplate', 'Message is required', function (value) {
-            const { useTemplate } = this.parent;
-            return useTemplate ? true : !!value;
-        }),
-});
-
 const EmailForm = ({
     templates,
     setTemplates,
     selectedTemplate,
     setSelectedTemplate,
     isBulk,
+    emailForm,
 }) => {
     const {
         dataList,
@@ -66,34 +36,23 @@ const EmailForm = ({
         handleSendCsvEmails,
         selectedRow,
     } = useContext(ManagerContext);
+    console.log(emailForm);
 
     const { user } = useContext(AuthContext);
-
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        watch,
-        reset,
-    } = useForm({
-        resolver: yupResolver(validationSchema),
-    });
-
-    const formValues = watch();
     const prevFormValuesRef = useRef();
-    const useTemplate = watch('useTemplate');
-    const from_name = watch('from_name');
-    const subject = watch('subject');
-    const message = watch('message');
+
     const isFormValid =
-        from_name && (useTemplate ? selectedTemplate : subject && message);
+        emailForm.from_name &&
+        (emailForm.useTemplate
+            ? selectedTemplate
+            : emailForm.subject && emailForm.message);
 
     // This useEffect hook is used to store the current form values in a ref object.
     // This is done so that the previous form values can be accessed in the next render cycle.
     // The hook will run every time the formValues state changes.
     useEffect(() => {
-        prevFormValuesRef.current = formValues;
-    }, [formValues]);
+        prevFormValuesRef.current = emailForm.formValues;
+    }, [emailForm.formValues]);
     const prevFormValues = prevFormValuesRef.current;
 
     // This useEffect hook is used to create new email templates whenever the form values change.
@@ -104,7 +63,7 @@ const EmailForm = ({
                 to_name: selectedRow.first_name,
                 to_email: selectedRow.email,
                 to_company: selectedRow.company,
-                from_name,
+                from_name: emailForm.from_name,
             };
             const newTemplates = createEmailTemplate(emailData);
             if (!_.isEqual(newTemplates, templates)) {
@@ -112,8 +71,11 @@ const EmailForm = ({
                 setSelectedTemplate(newTemplates[0]);
             }
         }
-        if (formValues && !_.isEqual(formValues, prevFormValues)) {
-            const newTemplates = createEmailTemplate(formValues);
+        if (
+            emailForm.formValues &&
+            !_.isEqual(emailForm.formValues, prevFormValues)
+        ) {
+            const newTemplates = createEmailTemplate(emailForm.formValues);
             if (!_.isEqual(newTemplates, templates)) {
                 setTemplates(newTemplates);
                 setSelectedTemplate(newTemplates[0]);
@@ -121,8 +83,8 @@ const EmailForm = ({
         }
     }, [
         dataList,
-        formValues,
-        from_name,
+        emailForm.formValues,
+        emailForm.from_name,
         prevFormValues,
         selectedRow,
         setSelectedTemplate,
@@ -139,13 +101,13 @@ const EmailForm = ({
             to_name: values.to_name,
             to_company: values.to_company,
             subject:
-                useTemplate && selectedTemplate
-                    ? selectedTemplate.subject
-                    : values.subject,
+                emailForm.useTemplate && emailForm.selectedTemplate
+                    ? emailForm.selectedTemplate.subject
+                    : emailForm.subject,
             message:
-                useTemplate && selectedTemplate
-                    ? selectedTemplate.content
-                    : values.message,
+                emailForm.useTemplate && emailForm.selectedTemplate
+                    ? emailForm.selectedTemplate.content
+                    : emailForm.message,
         };
 
         const data = {
@@ -165,7 +127,7 @@ const EmailForm = ({
             );
             if (response.status === 200) {
                 alert(`Email sent successfully`);
-                reset();
+                emailForm.reset();
             }
             setIsSending(false);
         } catch (error) {
@@ -174,32 +136,28 @@ const EmailForm = ({
     };
 
     return (
-        <>
-            <FormControlLabel
-                control={
-                    <Switch {...register('useTemplate')} color="primary" />
-                }
-                label="Use Template"
-            />
-            <form onSubmit={handleSubmit(onSubmit)}>
+        <Box width={'100%'}>
+            <form onSubmit={emailForm.handleSubmit(onSubmit)}>
                 {formFields.map((field) =>
                     isBulk &&
                     ['to_email', 'to_name', 'to_company'].includes(
                         field.id
-                    ) ? null : field.id === 'message' && useTemplate ? (
+                    ) ? null : field.id === 'message' &&
+                      emailForm.useTemplate ? (
                         <TemplateCarousel
                             templates={templates}
                             setSelectedTemplate={setSelectedTemplate}
                         />
-                    ) : field.id === 'subject' && useTemplate ? null : (
+                    ) : field.id === 'subject' &&
+                      emailForm.useTemplate ? null : (
                         <StyledField
                             key={field.id}
                             fullWidth
                             name={field.id}
                             label={field.label}
-                            {...register(field.id)}
-                            error={!!errors[field.id]}
-                            helperText={errors[field.id]?.message}
+                            {...emailForm.register(field.id)}
+                            error={!!emailForm.errors[field.id]}
+                            helperText={emailForm.errors[field.id]?.message}
                             {...(field.multiline && {
                                 multiline: true,
                                 rows: field.rows,
@@ -242,20 +200,24 @@ const EmailForm = ({
                                         to_name: item.first_name,
                                         to_email: item.email,
                                         to_company: item.company,
-                                        from_name,
+                                        from_name: emailForm.from_name,
                                         subject:
-                                            useTemplate && selectedTemplate
-                                                ? selectedTemplate.subject
-                                                : subject,
+                                            emailForm.useTemplate &&
+                                            emailForm.selectedTemplate
+                                                ? emailForm.selectedTemplate
+                                                      .subject
+                                                : emailForm.subject,
                                         message:
-                                            useTemplate && selectedTemplate
-                                                ? selectedTemplate.content
-                                                : message,
+                                            emailForm.useTemplate &&
+                                            emailForm.selectedTemplate
+                                                ? emailForm.selectedTemplate
+                                                      .content
+                                                : emailForm.message,
                                         from_email: 'test@mg.shauno.co',
                                     })),
                                 };
 
-                                handleSendCsvEmails(data, reset);
+                                handleSendCsvEmails(data, emailForm.reset);
                             }}
                             disabled={isSending}
                         >
@@ -264,7 +226,7 @@ const EmailForm = ({
                     )
                 )}
             </form>
-        </>
+        </Box>
     );
 };
 

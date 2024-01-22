@@ -1,9 +1,15 @@
 import { useContext } from 'react';
-import { Toolbar, IconButton, AppBar, Box, Button } from '@mui/material';
-import MailIcon from '@mui/icons-material/Mail';
-import InfoIcon from '@mui/icons-material/Info';
-import PersonIcon from '@mui/icons-material/Person';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import {
+    Toolbar,
+    IconButton,
+    AppBar,
+    Box,
+    Button,
+    useTheme,
+} from '@mui/material';
+
+import { Person, ExitToApp, Info, Mail } from '@mui/icons-material';
+
 import { signOut } from 'firebase/auth';
 import { AuthContext, auth } from '../context/AuthContext';
 import { ManagerContext } from '../components/emailManager/ManagerContext';
@@ -14,6 +20,7 @@ import Profile from '../pages/Profile';
 const Home = () => {
     const { user } = useContext(AuthContext);
     const { handleUseTrial, value, setValue } = useContext(ManagerContext);
+    const theme = useTheme();
 
     const handleSetValue = (newValue) => {
         setValue(newValue);
@@ -30,7 +37,11 @@ const Home = () => {
     };
 
     return (
-        <Box component="main" sx={{ height: '100vh', width: '100%' }}>
+        <Box
+            component="main"
+            sx={{ height: '100vh', width: '100vw' }}
+            backgroundColor={theme.palette.background.main}
+        >
             <AppBar position="static">
                 <Toolbar>
                     <Box flexGrow={1}>
@@ -40,7 +51,7 @@ const Home = () => {
                             aria-label="send"
                             onClick={() => handleSetValue('home')}
                         >
-                            <PersonIcon />
+                            <Person />
                         </IconButton>
                         <IconButton
                             edge="start"
@@ -48,7 +59,7 @@ const Home = () => {
                             aria-label="send"
                             onClick={() => handleSetValue('emailManager')}
                         >
-                            <MailIcon />
+                            <Mail />
                         </IconButton>
                         <IconButton
                             edge="start"
@@ -56,7 +67,7 @@ const Home = () => {
                             aria-label="info"
                             onClick={() => handleSetValue('dataDash')}
                         >
-                            <InfoIcon />
+                            <Info />
                         </IconButton>
                     </Box>
                     {user && !user.onTrial && !user.hasMailgunConfig ? (
@@ -76,7 +87,7 @@ const Home = () => {
                         aria-label="logout"
                         onClick={handleLogout}
                     >
-                        <ExitToAppIcon />
+                        <ExitToApp />
                     </IconButton>
                 </Toolbar>
             </AppBar>
