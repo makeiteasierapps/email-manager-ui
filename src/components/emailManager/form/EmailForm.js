@@ -1,4 +1,4 @@
-import { useContext, useRef, useEffect, useState } from 'react';
+import { useContext, useRef, useEffect } from 'react';
 import { styled } from '@mui/system';
 import {
     Button,

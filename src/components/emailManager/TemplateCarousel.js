@@ -1,7 +1,7 @@
-import { Card, CardContent } from '@mui/material';
+import { Paper, Box, Typography } from '@mui/material';
+
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-
 
 export const createEmailTemplate = (values) => {
     const templates = [
@@ -53,27 +53,42 @@ export const createEmailTemplate = (values) => {
 
 const TemplateCarousel = ({ templates, setSelectedTemplate }) => {
     return (
-        <Carousel
-            showThumbs={false}
-            onChange={(index) => setSelectedTemplate(templates[index])}
+        <Paper
+            elevation={3}
+            style={{ backgroundColor: '#000', marginBottom: '1rem' }}
         >
-            {templates.map((template) => (
-                <div key={template.id}>
-                    <Card>
-                        <CardContent>
-                            <div>
-                                <strong>Subject:</strong> {template.subject}
-                            </div>
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: template.content,
-                                }}
-                            />
-                        </CardContent>
-                    </Card>
-                </div>
-            ))}
-        </Carousel>
+            <Carousel
+                showIndicators={false}
+                showThumbs={false}
+                onChange={(index) => setSelectedTemplate(templates[index])}
+            >
+                {templates.map((template) => (
+                    <Box key={template.id} p={2} boxShadow={1}>
+                        <Typography
+                            variant="h6"
+                            component="strong"
+                            color="primary"
+                        >
+                            Subject: {template.subject}
+                        </Typography>
+                        <Box
+                            dangerouslySetInnerHTML={{
+                                __html: template.content,
+                            }}
+                            sx={{
+                                backgroundColor: 'primary.light', // Use theme colors
+                                padding: '10px',
+                                borderRadius: '4px',
+                                minHeight: '40vh',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                            }}
+                        />
+                    </Box>
+                ))}
+            </Carousel>
+        </Paper>
     );
 };
 

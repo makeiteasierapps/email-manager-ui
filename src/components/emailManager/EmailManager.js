@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 import EmailForm from './form/EmailForm';
 import CsvComponent from './dataExtract/ExtractedDataTable';
 
-const FormContainer = styled('div')({
+const FormContainer = styled(Box)({
     width: '70%',
 });
 
@@ -18,7 +18,7 @@ const EmailManager = () => {
             display={'flex'}
             flexDirection={'column'}
             width={'100%'}
-            height={'90vh'}
+            height={'100vh'}
             alignItems={'center'}
         >
             <Box
