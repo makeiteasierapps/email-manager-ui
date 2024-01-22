@@ -1,65 +1,16 @@
 import { useContext } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import {
-    Avatar,
-    Button,
-    TextField,
-    Box,
-    Typography,
-    Container,
-    useTheme,
-} from '@mui/material';
-import { GitHub, LockOutlined } from '@mui/icons-material';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
-import { auth, AuthContext } from '../context/AuthContext';
-
-const validationSchema = yup.object({
-    email: yup
-        .string('Enter your email')
-        .email('Enter a valid email')
-        .required('Email is required'),
-    password: yup
-        .string('Enter your password')
-        .min(8, 'Password should be of minimum 8 characters length')
-        .required('Password is required'),
-});
+import { Paper, Box, Typography, Container, useTheme } from '@mui/material';
+import { GitHub } from '@mui/icons-material';
+import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
     const { setUser, signInWithGithub } = useContext(AuthContext);
     const theme = useTheme();
 
-    const handleLogin = async (email, password) => {
-        try {
-            const userCredential = await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-            const user = userCredential.user;
-            setUser(user);
-        } catch (error) {
-            console.error(
-                'There has been a problem with your login operation:',
-                error
-            );
-        }
-    };
-
-    const formik = useFormik({
-        initialValues: {
-            email: '',
-            password: '',
-        },
-        validationSchema: validationSchema,
-        onSubmit: (values) => handleLogin(values.email, values.password),
-    });
-
     return (
         <Container
             component="main"
             maxWidth="xs"
-            
             sx={{
                 backgroundColor: theme.palette.background.main,
                 width: '100vw',
@@ -67,78 +18,54 @@ const Login = () => {
             }}
         >
             <Box
-                sx={{
-                    
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
+                display={'flex'}
+                flexDirection={'column'}
+                alignItems={'center'}
+                justifyContent={'center'}
+                height={'100vh'}
             >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlined />
-                </Avatar>
-                <Typography component="h1" variant="h5">
+                <Typography
+                    component="h1"
+                    fontSize={{ xs: '2.5rem', sm: '2.8rem', md: '3.5rem' }}
+                    fontWeight={'bold'}
+                    fontFamily={'Grape Nuts'}
+                >
                     Email Manager
                 </Typography>
-                <Box
-                    component="form"
-                    onSubmit={formik.handleSubmit}
-                    noValidate
-                    sx={{ mt: 1 }}
+
+                <Paper
+                    onClick={() => {
+                        signInWithGithub(setUser);
+                    }}
+                    elevation={4}
+                    sx={{
+                        mt: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        backgroundColor: theme.palette.background.main,
+                        width: '100%',
+                        padding: theme.spacing(2),
+                        borderRadius: theme.shape.borderRadius,
+                        '&:hover': {
+                            backgroundColor: theme.palette.primary.dark,
+                        },
+                    }}
                 >
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                        value={formik.values.email}
-                        onChange={formik.handleChange}
-                        error={
-                            formik.touched.email && Boolean(formik.errors.email)
-                        }
-                        helperText={formik.touched.email && formik.errors.email}
-                    />
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        value={formik.values.password}
-                        onChange={formik.handleChange}
-                        error={
-                            formik.touched.password &&
-                            Boolean(formik.errors.password)
-                        }
-                        helperText={
-                            formik.touched.password && formik.errors.password
-                        }
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                    >
-                        Sign In
-                    </Button>
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        startIcon={<GitHub />}
-                        onClick={() => {
-                            signInWithGithub(setUser);
+                    <GitHub
+                        sx={{
+                            fontSize: 66,
+                            color: theme.palette.text.secondary,
                         }}
-                        sx={{ mt: 2 }}
+                    />
+                    <Typography
+                        variant="h6"
+                        sx={{ mt: 1, color: theme.palette.text.secondary }}
                     >
                         Sign In with Github
-                    </Button>
-                </Box>
+                    </Typography>
+                </Paper>
             </Box>
         </Container>
     );

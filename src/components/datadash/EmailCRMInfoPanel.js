@@ -17,18 +17,20 @@ const EmailCRMInfoPanel = () => {
 
     useEffect(() => {
         const handleFetch = async () => {
-            try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/email-data?uid=${user.uid}`
-                );
-                console.log(response.data);
-                setData(response.data);
-            } catch (error) {
-                console.error(error);
+            if (user) {
+                try {
+                    const response = await axios.get(
+                        `${process.env.REACT_APP_BACKEND_URL}/email-data?uid=${user.uid}`
+                    );
+
+                    setData(response.data);
+                } catch (error) {
+                    console.error(error);
+                }
             }
         };
         handleFetch();
-    }, [user.uid]);
+    }, [user]);
 
     return (
         <TableContainer component={Box}>

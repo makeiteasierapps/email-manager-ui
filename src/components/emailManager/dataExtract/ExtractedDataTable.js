@@ -9,11 +9,13 @@ import {
     TableRow,
     Paper,
     Box,
+    useTheme,
 } from '@mui/material';
 
 import { ManagerContext } from '../ManagerContext';
 
 const ExtractedDataTable = () => {
+    const theme = useTheme();
     const { dataList, handleUpload, selectedRow, setSelectedRow } =
         useContext(ManagerContext);
 
@@ -28,14 +30,44 @@ const ExtractedDataTable = () => {
                     Extract Data
                 </Button>
             </Box>
-            <Box display={'flex'} justifyContent={'center'} margin={4} gap={2} width={'100%'}>
-                <TableContainer component={Paper} style={{ maxHeight: 440 }}>
+            <Box
+                display={'flex'}
+                justifyContent={'center'}
+                margin={4}
+                width={'100%'}
+            >
+                <TableContainer
+                    component={Paper}
+                    elevation={6}
+                    style={{ maxHeight: 440, minHeight: 200 }}
+                >
                     <Table aria-label="simple table">
-                        <TableHead>
+                        <TableHead
+                            sx={{
+                                borderBottom: `2px solid ${theme.palette.text.secondary}`,
+                            }}
+                        >
                             <TableRow>
-                                <TableCell align={'center'}>Name</TableCell>
-                                <TableCell align={'center'}>Email</TableCell>
-                                <TableCell align={'center'}>Company</TableCell>
+                                <TableCell
+                                    align={'center'}
+                                    sx={{
+                                        width: '150px',
+                                    }}
+                                >
+                                    Name
+                                </TableCell>
+                                <TableCell
+                                    align={'center'}
+                                    sx={{ width: '150px' }}
+                                >
+                                    Email
+                                </TableCell>
+                                <TableCell
+                                    align={'center'}
+                                    sx={{ width: '150px' }}
+                                >
+                                    Company
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -50,8 +82,13 @@ const ExtractedDataTable = () => {
                                     }}
                                     style={
                                         selectedRow.index === index
-                                            ? { backgroundColor: 'lightgray' }
-                                            : {}
+                                            ? {
+                                                  backgroundColor: '#0B666A',
+                                                  borderBottom: `2px solid ${theme.palette.text.secondary}`,
+                                              }
+                                            : {
+                                                  borderBottom: `2px solid ${theme.palette.text.secondary}`,
+                                              }
                                     }
                                 >
                                     <TableCell align={'center'}>

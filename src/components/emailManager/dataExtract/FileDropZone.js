@@ -3,10 +3,11 @@ import { Description, Delete } from '@mui/icons-material';
 
 import { useDropzone } from 'react-dropzone';
 import { useCallback } from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, Typography, IconButton, useTheme } from '@mui/material';
 import { ManagerContext } from '../ManagerContext';
 
 const FileDropZone = () => {
+    const theme = useTheme();
     const { setFile, selectedFile, setSelectedFile } =
         useContext(ManagerContext);
 
@@ -43,25 +44,27 @@ const FileDropZone = () => {
         <Box
             {...getRootProps()}
             display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            minHeight={70}
             sx={{
                 width: '30vw',
-                p: 2,
                 m: 2,
                 borderRadius: 1,
                 textAlign: 'center',
-                backgroundColor: isDragActive ? 'lightgray' : 'white',
+                backgroundColor: isDragActive
+                    ? '#0B666A'
+                    : theme.palette.text.secondary,
             }}
         >
             <input {...getInputProps()} />
 
             {!selectedFile && (
-                <Typography>
-                    Drag 'n' drop some files here, or click to select files
-                </Typography>
+                <Typography>Drop a file or click to select.</Typography>
             )}
 
             {selectedFile && (
-                <Box>
+                <Box display={'flex'} alignItems={'center'}>
                     <Description sx={{ fontSize: 50, color: 'primary.main' }} />
                     <Typography variant="body2">{selectedFile.name}</Typography>
                     <IconButton onClick={handleDelete}>

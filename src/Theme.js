@@ -19,7 +19,6 @@ const theme = createTheme({
             main: '#232D3F',
             paper: '#232D3F',
         },
-        borderColor: '#dedede',
     },
     components: {
         MuiButton: {
