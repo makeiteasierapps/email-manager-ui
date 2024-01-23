@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { initializeApp } from 'firebase/app';
 import {
@@ -98,38 +98,22 @@ const AuthProvider = ({ children }) => {
         }
     };
 
-    useEffect(() => {
-        const fetchUserData = async (uid) => {
-            const maxRetries = 3;
-            let attempts = 0;
-            while (attempts < maxRetries) {
-                try {
-                    const response = await axios.get(
-                        `${process.env.REACT_APP_BACKEND_URL}/profile`,
-                        { params: { uid } }
-                    );
-                    return response.data;
-                } catch (error) {
-                    console.error(error);
-                    if (error.response && error.response.status === 404) {
-                        attempts++;
-                        console.log(`Attempt ${attempts} failed. Retrying...`);
-                        continue;
-                    } else {
-                        alert(
-                            'Failed to fetch user data. Please try again later.'
-                        );
-                        return null;
-                    }
-                }
-            }
-            alert(
-                'Failed to fetch user data after several attempts. Please try again later.'
+    const fetchUserData = useCallback(async (uid) => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_BACKEND_URL}/profile`,
+                { params: { uid } }
             );
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            alert('Failed to fetch user data. Please try again later.');
             return null;
-        };
+        }
+    }, []);
 
-        const rehydrateUser = async () => {
+    useEffect(() => {
+        const rehydrateOnMount = async () => {
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
                 const userData = JSON.parse(storedUser);
@@ -150,11 +134,14 @@ const AuthProvider = ({ children }) => {
             }
         };
 
-        auth.onAuthStateChanged(async (user) => {
+        rehydrateOnMount();
+    }, []);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
                 const token = await user.getIdToken();
                 setIdToken(token);
-                await rehydrateUser(); // Rehydrate user data from localStorage or backend
             } else {
                 setIdToken(null);
                 setUser(null);
@@ -163,8 +150,7 @@ const AuthProvider = ({ children }) => {
             }
         });
 
-        // Call rehydrateUser on initial load as well
-        rehydrateUser();
+        return unsubscribe;
     }, []);
 
     return (
