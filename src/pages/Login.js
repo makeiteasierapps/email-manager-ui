@@ -59,15 +59,12 @@ const Login = () => {
                     }}
                 >
                     <GitHub
+                        color={'secondary'}
                         sx={{
                             fontSize: 66,
-                            color: theme.palette.text.secondary,
                         }}
                     />
-                    <Typography
-                        variant="h6"
-                        sx={{ mt: 1, color: theme.palette.text.secondary }}
-                    >
+                    <Typography variant="h6" color={'secondary'} sx={{ mt: 1 }}>
                         Sign In with Github
                     </Typography>
                 </Paper>

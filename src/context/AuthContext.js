@@ -100,17 +100,33 @@ const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const fetchUserData = async (uid) => {
-            try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/profile`,
-                    { params: { uid } }
-                );
-                return response.data;
-            } catch (error) {
-                console.error(error);
-                alert('Failed to fetch user data. Please try again later.');
-                return null;
+            const maxRetries = 3;
+            let attempts = 0;
+            while (attempts < maxRetries) {
+                try {
+                    const response = await axios.get(
+                        `${process.env.REACT_APP_BACKEND_URL}/profile`,
+                        { params: { uid } }
+                    );
+                    return response.data;
+                } catch (error) {
+                    console.error(error);
+                    if (error.response && error.response.status === 404) {
+                        attempts++;
+                        console.log(`Attempt ${attempts} failed. Retrying...`);
+                        continue;
+                    } else {
+                        alert(
+                            'Failed to fetch user data. Please try again later.'
+                        );
+                        return null;
+                    }
+                }
             }
+            alert(
+                'Failed to fetch user data after several attempts. Please try again later.'
+            );
+            return null;
         };
 
         const rehydrateUser = async () => {
@@ -142,7 +158,8 @@ const AuthProvider = ({ children }) => {
             } else {
                 setIdToken(null);
                 setUser(null);
-                localStorage.removeItem('user'); // Clear user data from localStorage
+                localStorage.removeItem('user');
+                localStorage.removeItem('location');
             }
         });
 

@@ -71,7 +71,6 @@ const EmailCRMInfoPanel = () => {
                 fontSize={{ xs: '2.5rem', sm: '3rem', md: '4.5rem' }}
                 fontFamily={'Grape Nuts'}
                 fontWeight={'bold'}
-                color={theme.palette.text.secondary}
             >
                 DataDash
             </Typography>
