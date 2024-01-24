@@ -36,7 +36,8 @@ const Login = () => {
                     fontFamily={'BioRhyme'}
                     color={'secondary'}
                     sx={{
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)' 
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
+                        whiteSpace: 'nowrap'
                     }}
                 >
                     Email Manager
