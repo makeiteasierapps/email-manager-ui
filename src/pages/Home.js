@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import {
     Toolbar,
     IconButton,
@@ -8,8 +8,8 @@ import {
     useTheme,
 } from '@mui/material';
 
+import { RiseLoader } from 'react-spinners';
 import { Person, ExitToApp, Info, Mail } from '@mui/icons-material';
-
 import { signOut } from 'firebase/auth';
 import { AuthContext, auth } from '../context/AuthContext';
 import { ManagerContext } from '../context/ManagerContext';
@@ -19,8 +19,9 @@ import MySnackBar from '../components/SnackBar';
 import Profile from '../pages/Profile';
 
 const Home = () => {
-    const { user } = useContext(AuthContext);
+    const [loading, setLoading] = useState(false);
 
+    const { user } = useContext(AuthContext);
     const {
         handleUseTrial,
         value,
@@ -30,6 +31,7 @@ const Home = () => {
         hideSnackbar,
     } = useContext(ManagerContext);
     const theme = useTheme();
+
     document.body.style.backgroundColor = theme.palette.background.main;
 
     const handleSetValue = (newValue) => {
@@ -95,7 +97,11 @@ const Home = () => {
                                 component="div"
                                 onClick={handleUseTrial}
                             >
-                                Start Trial
+                                {loading ? (
+                                    <RiseLoader color={'secondary'} />
+                                ) : (
+                                    'Start Trial'
+                                )}
                             </Button>
                         </Box>
                     ) : null}

@@ -82,9 +82,10 @@ const Profile = () => {
                     open={true}
                     style={{
                         zIndex: (theme) => theme.zIndex.drawer + 1,
+                        backgroundColor: 'rgba(0,0,0,0.7)',
                     }}
                 >
-                    <PuffLoader color="black" size={100} />
+                    <PuffLoader color={'secondary'} size={100} />
                 </Backdrop>
             ) : (
                 // Once user is populated, render the profile information

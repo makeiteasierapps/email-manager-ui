@@ -33,7 +33,11 @@ const Login = () => {
                     component="h1"
                     fontSize={{ xs: '2.5rem', sm: '2.8rem', md: '3.5rem' }}
                     fontWeight={'bold'}
-                    fontFamily={'Grape Nuts'}
+                    fontFamily={'BioRhyme'}
+                    color={'secondary'}
+                    sx={{
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)' 
+                    }}
                 >
                     Email Manager
                 </Typography>
@@ -44,7 +48,7 @@ const Login = () => {
                     }}
                     elevation={9}
                     sx={{
-                        mt: 2,
+                        mt: 1,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',

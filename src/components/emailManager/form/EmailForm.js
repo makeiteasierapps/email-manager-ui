@@ -1,4 +1,4 @@
-import { useContext, useRef, useEffect, useState } from 'react';
+import { useContext, useRef, useEffect } from 'react';
 import { styled } from '@mui/system';
 import { Button, TextField, Box } from '@mui/material';
 import TemplateCarousel, { createEmailTemplate } from '../TemplateCarousel';
@@ -189,7 +189,7 @@ const EmailForm = ({
                             height="100%"
                         >
                             {isSending ? (
-                                <RiseLoader color="white" />
+                                <RiseLoader color="secondary" />
                             ) : (
                                 'Submit'
                             )}
