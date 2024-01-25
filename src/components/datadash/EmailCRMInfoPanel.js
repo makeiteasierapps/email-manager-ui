@@ -71,6 +71,7 @@ const EmailCRMInfoPanel = () => {
                 fontSize={{ xs: '2.5rem', sm: '3rem', md: '4.5rem' }}
                 fontFamily={'BioRhyme'}
                 fontWeight={'bold'}
+                color={'secondary'}
                 sx={{
                     textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                 }}
