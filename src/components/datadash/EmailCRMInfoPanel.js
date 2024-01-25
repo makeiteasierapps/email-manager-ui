@@ -62,7 +62,7 @@ const EmailCRMInfoPanel = () => {
         <Box
             display={'flex'}
             flexDirection={'column'}
-            width={'80vw'}
+            width={{ xs: '100vw', sm: '90vw', md: '70vw' }}
             alignItems={'center'}
             justifyContent={'space-around'}
             height={'60vh'}
@@ -90,19 +90,19 @@ const EmailCRMInfoPanel = () => {
                         }}
                     >
                         <TableRow>
-                            <TableCell align={'center'} sx={{ width: '150px' }}>
+                            <TableCell align={'center'} sx={{ width: '3rem' }}>
                                 Follow Ups sent
                             </TableCell>
-                            <TableCell align={'center'} sx={{ width: '150px' }}>
+                            <TableCell align={'center'} sx={{ width: '3rem' }}>
                                 Company
                             </TableCell>
-                            <TableCell align={'center'} sx={{ width: '150px' }}>
+                            <TableCell align={'center'} sx={{ width: '3rem' }}>
                                 Email
                             </TableCell>
-                            <TableCell align={'center'} sx={{ width: '150px' }}>
+                            <TableCell align={'center'} sx={{ width: '3rem' }}>
                                 Name
                             </TableCell>
-                            <TableCell align={'center'} sx={{ width: '150px' }}>
+                            <TableCell align={'center'} sx={{ width: '3rem' }}>
                                 Received
                             </TableCell>
                         </TableRow>
