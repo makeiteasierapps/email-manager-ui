@@ -6,11 +6,11 @@ const theme = createTheme({
             main: '#0F0F0F',
         },
         secondary: {
-            main: '#008170',
+            main: '#00D1B5',
         },
         text: {
             primary: '#fff',
-            secondary: '#008170',
+            secondary: '#00D1B5',
         },
         error: {
             main: '#ff0000',
@@ -24,10 +24,10 @@ const theme = createTheme({
         MuiButton: {
             styleOverrides: {
                 outlined: {
-                    color: '#005B41',
+                    color: '#00D1B5',
                     borderColor: '#005B41',
                     '&:hover': {
-                        borderColor: '#008170',
+                        borderColor: '#00D1B5',
                     },
                 },
             },
@@ -41,15 +41,15 @@ const theme = createTheme({
                             borderColor: '#005B41',
                         },
                         '&:hover fieldset': {
-                            borderColor: '#008170',
+                            borderColor: '#00D1B5',
                         },
                         '&.Mui-focused fieldset': {
-                            borderColor: '#008170',
+                            borderColor: '#00D1B5',
                         },
                     },
                     '& .MuiInputLabel-root': {
                         '&.Mui-focused': {
-                            color: '#008170',
+                            color: '#00D1B5',
                         },
                     },
                 },

@@ -36,8 +36,8 @@ const Login = () => {
                     fontFamily={'BioRhyme'}
                     color={'secondary'}
                     sx={{
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
-                        whiteSpace: 'nowrap'
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                        whiteSpace: 'nowrap',
                     }}
                 >
                     Email Manager
@@ -66,10 +66,18 @@ const Login = () => {
                     <GitHub
                         color={'secondary'}
                         sx={{
+                            filter: 'drop-shadow(2px 4px 4px rgba(0,0,0,0.5))',
                             fontSize: 66,
                         }}
                     />
-                    <Typography variant="h6" color={'secondary'} sx={{ mt: 1 }}>
+                    <Typography
+                        variant="h6"
+                        color={'secondary'}
+                        sx={{
+                            mt: 1,
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                        }}
+                    >
                         Sign In with Github
                     </Typography>
                 </Paper>

@@ -11,6 +11,7 @@ import {
     Typography,
     Avatar,
     Backdrop,
+    useTheme,
 } from '@mui/material';
 
 import WelcomeModal from '../components/WelcomeModal';
@@ -21,6 +22,7 @@ const Profile = () => {
     const { user, setUser } = useContext(AuthContext);
     const [mailgunApiKey, setMailgunApiKey] = useState('');
     const [mailgunDomain, setMailgunDomain] = useState('');
+    const theme = useTheme();
 
     const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
@@ -85,7 +87,10 @@ const Profile = () => {
                         backgroundColor: 'rgba(0,0,0,0.7)',
                     }}
                 >
-                    <PuffLoader color={'secondary'} size={100} />
+                    <PuffLoader
+                        color={theme.palette.text.secondary}
+                        size={100}
+                    />
                 </Backdrop>
             ) : (
                 // Once user is populated, render the profile information
