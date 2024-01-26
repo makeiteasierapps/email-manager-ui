@@ -1,6 +1,6 @@
 {
   "short_name": "Email Manager",
-  "name": "Email Manager",
+  "name": "A full stack application built with React and Node.js utilizing the OpenAi API",
   "icons": [
     {
       "src": "favicon.ico",
