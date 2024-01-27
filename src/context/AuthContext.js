@@ -102,12 +102,10 @@ const AuthProvider = ({ children }) => {
     const signInWithLinkedIn = async (token, showSnackbar) => {
         try {
             const result = await signInWithCustomToken(auth, token);
-            // Handle the result of the sign-in
             const userData = {
                 uid: result.user.uid,
                 photoURL: result.user.photoURL,
                 displayName: result.user.displayName,
-                // You might want to fetch or set additional user data here
             };
             setUser(userData);
             localStorage.setItem('user', JSON.stringify(userData));

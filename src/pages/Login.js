@@ -21,14 +21,11 @@ const Login = () => {
     };
 
     useEffect(() => {
-        // Function to extract the token from the URL or other source
         const token = getTokenFromUrl();
         if (token) {
             signInWithLinkedIn(token, showSnackbar);
         }
     }, [showSnackbar, signInWithLinkedIn]);
-
-    console.log('token', getTokenFromUrl());
 
     return (
         <Container
@@ -86,7 +83,6 @@ const Login = () => {
                         sx={{
                             filter: 'drop-shadow(2px 4px 4px rgba(0,0,0,0.5))',
                             fontSize: 66,
-                            filter: 'drop-shadow(2px 4px 4px rgba(0,0,0,0.5))',
                         }}
                     />
                     <Typography
