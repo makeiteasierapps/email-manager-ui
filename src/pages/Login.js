@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import axios from 'axios';
+import { useContext, useEffect } from 'react';
 import { Paper, Box, Typography, Container, useTheme } from '@mui/material';
 import { GitHub, LinkedIn } from '@mui/icons-material';
 import { AuthContext } from '../context/AuthContext';
@@ -8,14 +7,28 @@ import { ManagerContext } from '../context/ManagerContext';
 import MySnackBar from '../components/SnackBar';
 
 const Login = () => {
-    const { signInWithGithub } = useContext(AuthContext);
+    const { signInWithGithub, signInWithLinkedIn } = useContext(AuthContext);
     const { showSnackbar, snackbarInfo, hideSnackbar } =
         useContext(ManagerContext);
     const theme = useTheme();
 
     const handleSignInWithLinkedIn = async () => {
-        window.location.href = 'http://localhost:5001/api/auth/linkedin';
+        window.location = `${process.env.REACT_APP_BACKEND_URL}/auth/linkedin`;
     };
+
+    const getTokenFromUrl = () => {
+        return new URLSearchParams(window.location.search).get('token');
+    };
+
+    useEffect(() => {
+        // Function to extract the token from the URL or other source
+        const token = getTokenFromUrl();
+        if (token) {
+            signInWithLinkedIn(token, showSnackbar);
+        }
+    }, [showSnackbar, signInWithLinkedIn]);
+
+    console.log('token', getTokenFromUrl());
 
     return (
         <Container
@@ -42,8 +55,8 @@ const Login = () => {
                     fontFamily={'BioRhyme'}
                     color={'secondary'}
                     sx={{
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
-                        whiteSpace: 'nowrap'
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                        whiteSpace: 'nowrap',
                     }}
                 >
                     Email Manager

@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback, useRef } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { initializeApp } from 'firebase/app';
 import {
@@ -6,6 +6,7 @@ import {
     GithubAuthProvider,
     signInWithPopup,
     getAdditionalUserInfo,
+    signInWithCustomToken,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -98,6 +99,30 @@ const AuthProvider = ({ children }) => {
         }
     };
 
+    const signInWithLinkedIn = async (token, showSnackbar) => {
+        try {
+            const result = await signInWithCustomToken(auth, token);
+            // Handle the result of the sign-in
+            const userData = {
+                uid: result.user.uid,
+                photoURL: result.user.photoURL,
+                displayName: result.user.displayName,
+                // You might want to fetch or set additional user data here
+            };
+            setUser(userData);
+            localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+            console.error(error);
+            let errorMessage = 'Login failed with token';
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            showSnackbar(errorMessage, 'error');
+        }
+    };
+
     const fetchUserData = useCallback(async (uid) => {
         try {
             const response = await axios.get(
@@ -139,6 +164,7 @@ const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            console.log('user', user);
             if (user) {
                 const token = await user.getIdToken();
                 setIdToken(token);
@@ -160,6 +186,7 @@ const AuthProvider = ({ children }) => {
                 user,
                 setUser,
                 signInWithGithub,
+                signInWithLinkedIn,
             }}
         >
             {children}
