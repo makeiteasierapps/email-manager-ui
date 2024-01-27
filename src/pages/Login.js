@@ -1,16 +1,34 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Paper, Box, Typography, Container, useTheme } from '@mui/material';
-import { GitHub } from '@mui/icons-material';
+import { GitHub, LinkedIn } from '@mui/icons-material';
 import { AuthContext } from '../context/AuthContext';
 import { ManagerContext } from '../context/ManagerContext';
 
 import MySnackBar from '../components/SnackBar';
 
 const Login = () => {
-    const { signInWithGithub } = useContext(AuthContext);
+    const { signInWithGithub, signInWithLinkedIn } = useContext(AuthContext);
     const { showSnackbar, snackbarInfo, hideSnackbar } =
         useContext(ManagerContext);
     const theme = useTheme();
+
+    const handleSignInWithLinkedIn = async () => {
+        window.location = `${process.env.REACT_APP_BACKEND_URL}/auth/linkedin`;
+    };
+
+    const getTokenFromUrl = () => {
+        return new URLSearchParams(window.location.search).get('token');
+    };
+
+    useEffect(() => {
+        // Function to extract the token from the URL or other source
+        const token = getTokenFromUrl();
+        if (token) {
+            signInWithLinkedIn(token, showSnackbar);
+        }
+    }, [showSnackbar, signInWithLinkedIn]);
+
+    console.log('token', getTokenFromUrl());
 
     return (
         <Container
@@ -28,6 +46,7 @@ const Login = () => {
                 alignItems={'center'}
                 justifyContent={'center'}
                 height={'100vh'}
+                gap={2}
             >
                 <Typography
                     component="h1"
@@ -49,7 +68,6 @@ const Login = () => {
                     }}
                     elevation={9}
                     sx={{
-                        mt: 1,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -68,6 +86,7 @@ const Login = () => {
                         sx={{
                             filter: 'drop-shadow(2px 4px 4px rgba(0,0,0,0.5))',
                             fontSize: 66,
+                            filter: 'drop-shadow(2px 4px 4px rgba(0,0,0,0.5))',
                         }}
                     />
                     <Typography
@@ -79,6 +98,41 @@ const Login = () => {
                         }}
                     >
                         Sign In with Github
+                    </Typography>
+                </Paper>
+                <Paper
+                    onClick={handleSignInWithLinkedIn}
+                    elevation={9}
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        backgroundColor: theme.palette.background.main,
+                        width: '100%',
+                        padding: theme.spacing(2),
+                        borderRadius: theme.shape.borderRadius,
+                        '&:hover': {
+                            backgroundColor: theme.palette.primary.dark,
+                        },
+                    }}
+                >
+                    <LinkedIn
+                        color={'secondary'}
+                        sx={{
+                            fontSize: 66,
+                            filter: 'drop-shadow(2px 4px 4px rgba(0,0,0,0.5))',
+                        }}
+                    />
+                    <Typography
+                        variant="h6"
+                        color={'secondary'}
+                        sx={{
+                            mt: 1,
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                        }}
+                    >
+                        Sign In with LinkedIn
                     </Typography>
                 </Paper>
             </Box>
