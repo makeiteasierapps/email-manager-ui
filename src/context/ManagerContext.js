@@ -74,6 +74,8 @@ export const ManagerProvider = ({ children }) => {
         const formData = new FormData();
         formData.append('file', file);
 
+        console.log('Uploading file...', file)
+
         try {
             const response = await axios.post(
                 `${process.env.REACT_APP_BACKEND_URL}/process-file`,
